@@ -35,6 +35,8 @@ public class StoveCounter : BaseCounter, IHasProgress
 
     private void Start()
     {
+        if (!IsServer) return;
+
         state.Value = State.Idle;
         OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { State = state.Value });
     }

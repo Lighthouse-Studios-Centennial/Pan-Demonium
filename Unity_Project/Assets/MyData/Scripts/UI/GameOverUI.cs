@@ -16,7 +16,7 @@ public class GameOverUI : MonoBehaviour
         continueBtn.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.Shutdown();
-            Loader.LoadScene(Loader.Scene.Gameplay);
+            Loader.LoadScene(Loader.Scene.MainMenu);
         });
         Hide();
     }

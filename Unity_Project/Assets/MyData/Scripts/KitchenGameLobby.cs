@@ -128,7 +128,7 @@ public class KitchenGameLobby : MonoBehaviour
             Debug.Log("Initializing Unity Services...");
             InitializationOptions initilizationOption = new();
             // Uncomment below line when for testing on same device
-            //initilizationOption.SetProfile(Random.Range(0, int.MaxValue).ToString());
+            initilizationOption.SetProfile(Random.Range(0, int.MaxValue).ToString());
             await UnityServices.InitializeAsync(initilizationOption);
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }

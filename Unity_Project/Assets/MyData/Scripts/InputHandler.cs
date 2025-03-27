@@ -59,7 +59,7 @@ public class InputHandler : MonoBehaviour
 
     private void Pause_performed(InputAction.CallbackContext obj)
     {
-        OnPauseAction?.Invoke(this, EventArgs.Empty);
+        //OnPauseAction?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnInteractAlt(InputAction.CallbackContext obj)
