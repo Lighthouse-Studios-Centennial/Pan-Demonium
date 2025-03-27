@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -10,6 +11,8 @@ public class RecipeSingleUI : MonoBehaviour
     [SerializeField] private Transform recipeIconContainer;
     [SerializeField] private Transform recipeIconTemplate;
 
+    RecipeSO recipeSO;
+
     private void Awake()
     {
         recipeIconTemplate.gameObject.SetActive(false);
@@ -17,6 +20,7 @@ public class RecipeSingleUI : MonoBehaviour
 
     public void SetRecipeSO(RecipeSO recipeSO)
     {
+        this.recipeSO = recipeSO;
         recipeNameText.text = recipeSO.recipeName;
 
         foreach (Transform child in recipeIconContainer)
@@ -27,11 +31,16 @@ public class RecipeSingleUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        foreach(var recipe in recipeSO.kitchenObjectSOList)
+        foreach (var recipe in recipeSO.kitchenObjectSOList)
         {
             var iconUI = Instantiate(recipeIconTemplate, recipeIconContainer);
             iconUI.gameObject.SetActive(true);
             iconUI.GetChild(0).GetComponent<Image>().sprite = recipe.icon;
         }
+    }
+
+    public int GetRecipeId()
+    {
+        return recipeSO.recipeId;
     }
 }

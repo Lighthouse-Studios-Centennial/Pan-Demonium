@@ -22,7 +22,7 @@ public class DeliveryManager : NetworkBehaviour
     private int waitingRecipeMax = 6;
     private float recipeTimer = 4f;
     private float recipeTimerMax = 4f;
-
+    private int recipeIdCounter = 0;
     private void Awake()
     {
         Instance = this;
@@ -59,7 +59,8 @@ public class DeliveryManager : NetworkBehaviour
     [ClientRpc]
     private void DeliverRecipeClientRpc(int waitingRecipeSOIndex)
     {
-        var waitingRecipeSO = recipeListSO.Recipes[waitingRecipeSOIndex];
+        var waitingRecipeSO = Instantiate(recipeListSO.Recipes[waitingRecipeSOIndex]);
+        waitingRecipeSO.recipeId = recipeIdCounter++;
         Debug.Log(waitingRecipeSO.recipeName);
         waitingRecipiesList.Add(waitingRecipeSO);
 

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +5,10 @@ public class DeliveryManagerUI : MonoBehaviour
 {
     [SerializeField] private Transform recipeContainer;
     [SerializeField] private Transform recipeTemplate;
+
+    bool isRecipeSpawned = false;
+    List<RecipeSO> curWaitingRecipiesList = new List<RecipeSO>();
+    List<RecipeSingleUI> curRecipeUIList = new List<RecipeSingleUI>();
 
     private void Start()
     {
@@ -26,20 +29,30 @@ public class DeliveryManagerUI : MonoBehaviour
 
     public void UpdateVisual()
     {
-        foreach (Transform child in recipeContainer.transform)
-        {
-            if(child == recipeTemplate)
-                continue;
+        var waitingRecipiesList = DeliveryManager.Instance.GetWaitingRecipeSOList();
 
-            Destroy(child.gameObject);
+        for(int i = 0; i < curRecipeUIList.Count; i++)
+        {
+            if (waitingRecipiesList.Exists(x => x.recipeId == curRecipeUIList[i].GetRecipeId()))
+            {
+                continue;
+            }
+            Destroy(curRecipeUIList[i].gameObject);
+            curRecipeUIList.RemoveAt(i);
+            i--;
         }
 
-        var waitingRecipiesList = DeliveryManager.Instance.GetWaitingRecipeSOList();
-        foreach (var waitingRecipe in waitingRecipiesList)
+        for (int i = 0; i < waitingRecipiesList.Count; i++)
         {
-            var waitingRecipeUI = Instantiate(recipeTemplate, recipeContainer);
+            if(curRecipeUIList.Exists(x => x.GetRecipeId() == waitingRecipiesList[i].recipeId))
+            {
+                continue;
+            }
+            var waitingRecipeUI = Instantiate(recipeTemplate, recipeContainer).GetComponent<RecipeSingleUI>();
             waitingRecipeUI.gameObject.SetActive(true);
-            waitingRecipeUI.GetComponent<RecipeSingleUI>().SetRecipeSO(waitingRecipe);
+            waitingRecipeUI.SetRecipeSO(waitingRecipiesList[i]);
+
+            curRecipeUIList.Add(waitingRecipeUI);
         }
     }
 }
