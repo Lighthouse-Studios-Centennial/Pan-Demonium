@@ -37,7 +37,7 @@ public class DeliveryManagerUI : MonoBehaviour
             {
                 continue;
             }
-            Destroy(curRecipeUIList[i].gameObject);
+            curRecipeUIList[i].Deactivate();
             curRecipeUIList.RemoveAt(i);
             i--;
         }
@@ -49,8 +49,9 @@ public class DeliveryManagerUI : MonoBehaviour
                 continue;
             }
             var waitingRecipeUI = Instantiate(recipeTemplate, recipeContainer).GetComponent<RecipeSingleUI>();
-            waitingRecipeUI.gameObject.SetActive(true);
             waitingRecipeUI.SetRecipeSO(waitingRecipiesList[i]);
+            waitingRecipeUI.SetLifeTime(DeliveryManager.Instance.GetRecipeLifeTime());
+            waitingRecipeUI.Activate();
 
             curRecipeUIList.Add(waitingRecipeUI);
         }

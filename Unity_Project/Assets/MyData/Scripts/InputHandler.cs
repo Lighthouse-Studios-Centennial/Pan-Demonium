@@ -19,11 +19,13 @@ public class InputHandler : MonoBehaviour
         Move_Right,
         Interact,
         Interact_Alt,
+        Dash,
         Pause,
 
         Move_Gamepad,
         Interact_Gamepad,
         Interact_Alt_Gamepad,
+        Dash_Gamepad,
         Pause_Gamepad,
     }
 
@@ -90,6 +92,10 @@ public class InputHandler : MonoBehaviour
         return moveInput;
     }
 
+    public bool IsDashTriggered()
+    {
+        return inputActions.Player.Dash.triggered;
+    }
     public void RebindBindings(Bindings bindings, Action onRebindCompleted)
     {
         InputAction inputAction;
@@ -120,6 +126,10 @@ public class InputHandler : MonoBehaviour
                 break;
             case Bindings.Interact_Alt:
                 inputAction = inputActions.Player.InteractAlt;
+                bindingIndex = 0;
+                break;
+            case Bindings.Dash:
+                inputAction = inputActions.Player.Dash;
                 bindingIndex = 0;
                 break;
             case Bindings.Pause:
@@ -185,6 +195,8 @@ public class InputHandler : MonoBehaviour
                 return inputActions.Player.Interact.bindings[0].ToDisplayString();
             case Bindings.Interact_Alt:
                 return inputActions.Player.InteractAlt.bindings[0].ToDisplayString();
+            case Bindings.Dash:
+                return inputActions.Player.Dash.bindings[0].ToDisplayString();
             case Bindings.Pause:
                 return inputActions.Player.Pause.bindings[0].ToDisplayString();
             case Bindings.Move_Gamepad:

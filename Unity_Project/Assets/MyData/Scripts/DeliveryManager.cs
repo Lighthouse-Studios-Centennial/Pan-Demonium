@@ -16,6 +16,8 @@ public class DeliveryManager : NetworkBehaviour
     public static DeliveryManager Instance { get; private set; }
 
     [SerializeField] private RecipeListSO recipeListSO;
+    [SerializeField] float recipeLifeTime = 60f;
+
     private List<RecipeSO> waitingRecipiesList = new();
 
     public int SuccessfulDeliveries { get; private set; }
@@ -137,8 +139,27 @@ public class DeliveryManager : NetworkBehaviour
         OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
     }
 
+    [ServerRpc(RequireOwnership = true)]
+    public void RecipeOutdatedServerRpc(int recipeId)
+    {
+        int waitingRecipeSOIndex = waitingRecipiesList.FindIndex(x => x.recipeId == recipeId);
+        RecipeOutdatedClientRpc(waitingRecipeSOIndex);
+    }
+
+    [ClientRpc]
+    private void RecipeOutdatedClientRpc(int waitingRecipeSOIndex)
+    {
+        waitingRecipiesList.RemoveAt(waitingRecipeSOIndex);
+        OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
+    }
+
     public List<RecipeSO> GetWaitingRecipeSOList()
     {
         return waitingRecipiesList;
+    }
+
+    public float GetRecipeLifeTime()
+    {
+        return recipeLifeTime;
     }
 }

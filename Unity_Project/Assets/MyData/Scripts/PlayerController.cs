@@ -27,6 +27,14 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
     private BaseCounter selectedCounter;
     private KitchenObject kitchenObject;
 
+    private bool isDashing = false;
+    private float dashInitialSpeedMultiplier = 6f;
+    private float dashEndSpeedMultiplier = 1.5f;
+    private float dashDuration = 0.3f;
+    private float dashCooldown = 1f;
+    private float lastDashTime = -Mathf.Infinity;
+
+
     public static void ResetStaticData()
     {
         OnAnyPlayerSpawned = null;
@@ -97,7 +105,7 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
         }
 
         HandleMovement();
-
+        HandleDash();
         HandleInteraction();
     }
 
@@ -131,14 +139,15 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
     private void HandleMovement()
     {
         var moveInput = InputHandler.Instance.GetInputVector();
-
         var moveDir = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
 
         float playerRadius = .7f;
-        float moveDistance = moveSpeed * Time.deltaTime;
-        bool canMove = !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDir, Quaternion.identity,moveDistance, collisionLayerMask);
+        float speedMultiplier = isDashing ? Mathf.Lerp(dashInitialSpeedMultiplier, dashEndSpeedMultiplier, (Time.time - lastDashTime) / dashDuration) : 1f;
+        float moveDistance = moveSpeed * speedMultiplier * Time.deltaTime;
 
-        if (!canMove)
+        bool canMove = !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDir, Quaternion.identity, moveDistance, collisionLayerMask);
+
+        if (!canMove && !isDashing)
         {
             // Attempt Only X Movement
             var moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
@@ -158,10 +167,6 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
                 {
                     moveDir = moveDirZ;
                 }
-                else
-                {
-                    // Can't Move In Any Direction
-                }
             }
         }
 
@@ -174,6 +179,23 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
 
         float rotationSpeed = 10f;
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotationSpeed);
+
+    }
+
+    private void HandleDash()
+    {
+        if (InputHandler.Instance.IsDashTriggered() && Time.time >= lastDashTime + dashCooldown)
+        {
+            StartCoroutine(DashCoroutine());
+        }
+    }
+
+    private IEnumerator DashCoroutine()
+    {
+        isDashing = true;
+        lastDashTime = Time.time;
+        yield return new WaitForSeconds(dashDuration);
+        isDashing = false;
     }
 
     private void SetSelectedCounter(BaseCounter counter)
