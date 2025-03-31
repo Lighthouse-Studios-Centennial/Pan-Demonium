@@ -201,7 +201,8 @@ public class GameManager : NetworkBehaviour
 
     public bool IsLocalPlayerReady() => isLocalPlayerReady;
 
-    public float GetPlayingTimerNormalized() => 1 - (gameplayTimer.Value / maxGameplayTimer);
+    public float GetPlayingTimerNormalized() => (gameplayTimer.Value / maxGameplayTimer);
+    public float GetPlayingTimer() => gameplayTimer.Value;
 
     [ServerRpc(RequireOwnership = false)]
     private void SetGamePauseServerRpc(ServerRpcParams serverRpcParams = default)
