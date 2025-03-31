@@ -31,7 +31,7 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
     private float dashInitialSpeedMultiplier = 6f;
     private float dashEndSpeedMultiplier = 1.5f;
     private float dashDuration = 0.3f;
-    private float dashCooldown = 1f;
+    private float dashCooldown = 0.7f;
     private float lastDashTime = -Mathf.Infinity;
 
 
@@ -135,13 +135,13 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
             SetSelectedCounter(null);
         }
     }
-
+    
     private void HandleMovement()
     {
         var moveInput = InputHandler.Instance.GetInputVector();
         var moveDir = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
-
-        float playerRadius = .7f;
+        
+        float playerRadius = .6f;
         float speedMultiplier = isDashing ? Mathf.Lerp(dashInitialSpeedMultiplier, dashEndSpeedMultiplier, (Time.time - lastDashTime) / dashDuration) : 1f;
         float moveDistance = moveSpeed * speedMultiplier * Time.deltaTime;
 
@@ -149,24 +149,58 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
 
         if (!canMove && !isDashing)
         {
-            // Attempt Only X Movement
-            var moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
-            canMove = moveDir.x != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirX, Quaternion.identity, moveDistance, collisionLayerMask);
+            Debug.Log("MoveDir: " + moveDir);
 
-            if (canMove)
+            // Attempt Only X Movement
+            if(Mathf.Abs(moveDir.z) > 0.8f && Mathf.Abs(moveDir.x) > 0.1f)
             {
-                moveDir = moveDirX;
+                var moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
+                canMove = moveDir.x != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirX, Quaternion.identity, moveDistance, collisionLayerMask);
+
+                if (canMove)
+                {
+                    moveDir = moveDirX;
+                    moveDistance *= 0.9f;
+                }
+                else
+                {
+                    // Attempt Only Z Movement
+                    var moveDirZ = new Vector3(0, 0, moveDir.z).normalized;
+                    canMove = moveDir.z != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirZ, Quaternion.identity, moveDistance, collisionLayerMask);
+
+                    if (canMove)
+                    {
+                        moveDir = moveDirZ;
+                        moveDistance *= 0.9f;
+                    }
+                }
             }
-            else
+            else if(Mathf.Abs(moveDir.x) > 0.8f && Mathf.Abs(moveDir.z) > 0.1f)
             {
-                // Attempt Only Z Movement
                 var moveDirZ = new Vector3(0, 0, moveDir.z).normalized;
                 canMove = moveDir.z != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirZ, Quaternion.identity, moveDistance, collisionLayerMask);
 
                 if (canMove)
                 {
                     moveDir = moveDirZ;
+                    moveDistance *= 0.9f;
                 }
+                else
+                {
+                    // Attempt Only X Movement
+                    var moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
+                    canMove = moveDir.x != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirX, Quaternion.identity, moveDistance, collisionLayerMask);
+
+                    if (canMove)
+                    {
+                        moveDir = moveDirX;
+                        moveDistance *= 0.9f;
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log("Cant move");
             }
         }
 

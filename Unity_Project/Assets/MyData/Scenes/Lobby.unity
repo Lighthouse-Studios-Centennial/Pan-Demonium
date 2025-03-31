@@ -3691,7 +3691,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  playerColorSO: {fileID: 11400000, guid: 896bdc8a048b01545b77f49366df832b, type: 2}
+  playerColorSO: {fileID: 11400000, guid: 9400b7b2e2fc77944af156d1e39365fa, type: 2}
   kitchenObjectsListSO: {fileID: 11400000, guid: 5841c96ef629af540bdf1851cdfd494b,
     type: 2}
 --- !u!4 &1096992531
@@ -5071,9 +5071,9 @@ RectTransform:
   - {fileID: 2012050997}
   m_Father: {fileID: 130637945}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 525, y: -80}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1000, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1583572007
