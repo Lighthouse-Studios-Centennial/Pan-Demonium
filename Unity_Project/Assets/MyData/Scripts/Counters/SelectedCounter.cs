@@ -15,6 +15,14 @@ public class SelectedCounter : MonoBehaviour
             PlayerController.OnAnyPlayerSpawned += PlayerController_OnAnyPlayerSpawned;
     }
 
+    private void OnDestroy()
+    {
+        if (PlayerController.LocalInstance)
+            PlayerController.LocalInstance.OnSelectedCounterChanged -= OnSelectedCounterChanged;
+        else
+            PlayerController.OnAnyPlayerSpawned -= PlayerController_OnAnyPlayerSpawned;
+    }
+
     private void PlayerController_OnAnyPlayerSpawned(object sender, System.EventArgs e)
     {
         if (PlayerController.LocalInstance)
@@ -46,6 +54,7 @@ public class SelectedCounter : MonoBehaviour
 
     private void Hide()
     {
+        Debug.Log(transform.name);
         foreach (GameObject go in selectedVisualGO)
         {
             go.SetActive(false);

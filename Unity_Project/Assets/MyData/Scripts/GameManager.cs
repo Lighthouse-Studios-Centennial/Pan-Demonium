@@ -11,7 +11,7 @@ public class GameManager : NetworkBehaviour
 
     public event EventHandler OnStateChanged;
     public event Action<bool> OnLocalPauseStatusChanged;
-    public event Action<bool> OnMultiplayerPauseStateChanged;   
+    public event Action<bool> OnMultiplayerPauseStateChanged;
     public event EventHandler OnLocalPlayerReadyChanged;
 
     private enum State
@@ -166,6 +166,7 @@ public class GameManager : NetworkBehaviour
                     gameplayTimer.Value = maxGameplayTimer;
                 }
                 break;
+
             case State.GamePlaying:
                 gameplayTimer.Value -= Time.deltaTime;
                 if (gameplayTimer.Value < 0f)
@@ -173,8 +174,10 @@ public class GameManager : NetworkBehaviour
                     state.Value = State.GameOver;
                 }
                 break;
+
             case State.GameOver:
                 break;
+
             default:
                 break;
         }

@@ -60,11 +60,6 @@ public class KitchenGameMultiplayer : NetworkBehaviour
         PlayerPrefs.SetString(PLAYER_PREF_PLAYER_NAME_KEY, playerName);
     }
 
-    private void CurrentGameLevelIndex_OnValueChanged(int previousValue, int newValue)
-    {
-        OnGameLevelIndexChanged?.Invoke(newValue);
-    }
-
     private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent)
     {
         OnPlayerDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
