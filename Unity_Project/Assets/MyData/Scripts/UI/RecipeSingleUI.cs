@@ -21,8 +21,6 @@ public class RecipeSingleUI : MonoBehaviour
     [SerializeField] DOTweenAnimation completeAnimation;
     [SerializeField] DOTweenAnimation outDatedAnimation;
 
-    private float maxLifeTime = 0f;
-    private float timer = 0f;
     private bool isActivated = false;
     RecipeSO recipeSO;
 
@@ -54,8 +52,7 @@ public class RecipeSingleUI : MonoBehaviour
 
     public void SetLifeTime(float lifeTime)
     {
-        maxLifeTime = lifeTime;
-        timer = lifeTime;
+        recipeSO.SetMaxRecipeLifeTime(lifeTime);
     }
 
     public void Activate()
@@ -74,8 +71,8 @@ public class RecipeSingleUI : MonoBehaviour
         if (!isActivated)
             return;
 
-        timer -= Time.deltaTime;
-        float progress = timer / maxLifeTime;
+        recipeSO.recipeLifeTime -= Time.deltaTime;
+        float progress = recipeSO.recipeLifeTime / recipeSO.maxRecipeLifeTime;
 
         timerBar.fillAmount = progress;
         timerBar.color = Color.Lerp(timerBarMinColor, timerBarMaxColor, progress);
@@ -85,7 +82,7 @@ public class RecipeSingleUI : MonoBehaviour
             shakeAnimation.DOPlay();
         }
 
-        if (timer <= 0)
+        if (recipeSO.recipeLifeTime <= 0)
         {
             DeliveryManager.Instance.RecipeOutdatedServerRpc(recipeSO.recipeId);
             isActivated = false;
@@ -94,7 +91,7 @@ public class RecipeSingleUI : MonoBehaviour
 
     public void Deactivate()
     {
-        if(timer > 0)
+        if(recipeSO.recipeLifeTime > 0)
         {
             // Recipe is completed
             completeAnimation.gameObject.SetActive(true);

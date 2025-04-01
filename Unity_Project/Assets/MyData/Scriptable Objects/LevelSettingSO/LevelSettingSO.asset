@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce5a1e705b3f84d0c8c91a0c478cf864, type: 3}
+  m_Name: LevelSettingSO
+  m_EditorClassIdentifier: 
+  levelId: 0
+  levelName: Demo
+  levelGameTime: 180
+  recipeLifeTime: 60
+  waitingRecipeMax: 6
+  deliverRecipeInterval: 10
+  wrongRecipePenaltyForPassionMeter: 30
+  passionMeterSO: {fileID: 11400000, guid: f1e4c445553fa476c9261b77fe19a922, type: 2}

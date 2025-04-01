@@ -30,6 +30,13 @@ public class DeliveryManager : NetworkBehaviour
         Instance = this;
     }
 
+    void Start()
+    {
+        recipeLifeTime = GameManager.Instance.GetRecipeLifeTime();
+        waitingRecipeMax = GameManager.Instance.GetWaitingRecipeMax();
+        recipeTimerMax = GameManager.Instance.GetDeliverRecipeInterval();
+        recipeTimer = recipeTimerMax;
+    }
     private void Update()
     {
         if (!IsServer)
@@ -63,6 +70,7 @@ public class DeliveryManager : NetworkBehaviour
     {
         var waitingRecipeSO = Instantiate(recipeListSO.Recipes[waitingRecipeSOIndex]);
         waitingRecipeSO.recipeId = recipeIdCounter++;
+        waitingRecipeSO.recipeLifeTime = recipeLifeTime;
         Debug.Log(waitingRecipeSO.recipeName);
         waitingRecipiesList.Add(waitingRecipeSO);
 
@@ -114,6 +122,8 @@ public class DeliveryManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void DeliverIncorrectRecipeServerRpc()
     {
+        GameManager.Instance.DeliveredIncorrectRecipeServerRpc();
+
         DeliverIncorrectRecipeClientRpc();
     }
 
@@ -126,6 +136,9 @@ public class DeliveryManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void DeliverCorrectRecipeServerRpc(int waitingRecipeSOIndex)
     {
+        var recipeSO = waitingRecipiesList[waitingRecipeSOIndex];
+        GameManager.Instance.DeliveredCorrectRecipeServerRpc(recipeSO.GetWorth(), recipeSO.passionValue);
+
         DeliverCorrectRecipeClientRpc(waitingRecipeSOIndex);
     }
 
@@ -142,6 +155,8 @@ public class DeliveryManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = true)]
     public void RecipeOutdatedServerRpc(int recipeId)
     {
+        GameManager.Instance.DeliveredIncorrectRecipeServerRpc();
+
         int waitingRecipeSOIndex = waitingRecipiesList.FindIndex(x => x.recipeId == recipeId);
         RecipeOutdatedClientRpc(waitingRecipeSOIndex);
     }

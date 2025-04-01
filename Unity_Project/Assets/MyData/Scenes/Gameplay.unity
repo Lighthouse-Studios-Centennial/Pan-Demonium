@@ -9873,6 +9873,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   playerPrefab: {fileID: 1684222536406231341, guid: 9dfa9becbeffd14438103e309586a08d,
     type: 3}
+  levelSettingSO: {fileID: 11400000, guid: 3df1d6856e2ec47259c30f7a65be0e37, type: 2}
 --- !u!4 &1410951004
 Transform:
   m_ObjectHideFlags: 0

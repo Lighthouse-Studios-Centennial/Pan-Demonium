@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UniRx;
+using Unity.Profiling;
 
 public class GameManager : NetworkBehaviour
 {
@@ -11,7 +13,7 @@ public class GameManager : NetworkBehaviour
 
     public event EventHandler OnStateChanged;
     public event Action<bool> OnLocalPauseStatusChanged;
-    public event Action<bool> OnMultiplayerPauseStateChanged;   
+    public event Action<bool> OnMultiplayerPauseStateChanged;
     public event EventHandler OnLocalPlayerReadyChanged;
 
     private enum State
@@ -23,6 +25,9 @@ public class GameManager : NetworkBehaviour
     }
 
     [SerializeField] private Transform playerPrefab;
+    [SerializeField] private LevelSettingSO levelSettingSO;
+    private PassionMeterLevelSetting currentPassionMeterLevelSetting;
+    private int currentPassionMeterLevelSettingIndex = 0;
 
     private NetworkVariable<State> state = new(State.WaitingToStart);
     private bool isLocalPlayerReady;
@@ -30,6 +35,10 @@ public class GameManager : NetworkBehaviour
     private NetworkVariable<float> countdownToStartCountdown = new(3f); // Default
     //private float countdownToStartCountdown = 1f; // Testing
     private NetworkVariable<float> gameplayTimer = new(0f);
+    private NetworkVariable<int> totalEarnings = new(0);
+    private NetworkVariable<float> passionMeter = new(0f);
+    private ReactiveProperty<int> earningReactive = new(0);
+    private ReactiveProperty<int> passionMeterReactive = new(0);
     private float maxGameplayTimer = 5 * 60f; // Default
     //private float maxGameplayTimer = 15 * 60f; // Testing
     private bool isLocalGamePaused = false;
@@ -51,6 +60,22 @@ public class GameManager : NetworkBehaviour
     {
         InputHandler.Instance.OnPauseAction += InputHandler_OnPauseAction;
         InputHandler.Instance.OnInteractAction += InputHandler_OnInteractAction;
+
+        totalEarnings.OnValueChanged += (previousValue, newValue) =>
+        {
+            // Update UI or perform any action when total earnings change
+            earningReactive.Value = newValue;
+        };
+
+        passionMeter.OnValueChanged += (previousValue, newValue) =>
+        {
+            // Update UI or perform any action when passion meter changes
+            UpdateCurrentPassionMeterSetting();
+            passionMeterReactive.Value = (int)newValue;
+        };
+
+        maxGameplayTimer = levelSettingSO.levelGameTime;
+        UpdateCurrentPassionMeterSetting();
     }
 
     public override void OnNetworkSpawn()
@@ -96,7 +121,7 @@ public class GameManager : NetworkBehaviour
 
     private void InputHandler_OnInteractAction(object sender, EventArgs e)
     {
-        if(state.Value == State.WaitingToStart)
+        if (state.Value == State.WaitingToStart)
         {
             isLocalPlayerReady = true;
 
@@ -172,6 +197,7 @@ public class GameManager : NetworkBehaviour
                 {
                     state.Value = State.GameOver;
                 }
+                HandlePassionLostPerSecond();
                 break;
             case State.GameOver:
                 break;
@@ -204,6 +230,15 @@ public class GameManager : NetworkBehaviour
     public float GetPlayingTimerNormalized() => (gameplayTimer.Value / maxGameplayTimer);
     public float GetPlayingTimer() => gameplayTimer.Value;
 
+    public ReactiveProperty<int> GetEarningReactive() => earningReactive;
+    public ReactiveProperty<int> GetPassionMeterReactive() => passionMeterReactive;
+    public float GetPassionMeterNormalized() => (passionMeter.Value / currentPassionMeterLevelSetting.maxPassion);
+    public float GetPassionMeterMultiplier() => currentPassionMeterLevelSetting.passionMultiplier;
+    public float GetRecipeLifeTime() => levelSettingSO.recipeLifeTime;
+    public int GetWaitingRecipeMax() => levelSettingSO.waitingRecipeMax;
+    public float GetDeliverRecipeInterval() => levelSettingSO.deliverRecipeInterval;
+
+
     [ServerRpc(RequireOwnership = false)]
     private void SetGamePauseServerRpc(ServerRpcParams serverRpcParams = default)
     {
@@ -220,6 +255,27 @@ public class GameManager : NetworkBehaviour
         TestPauseState();
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void DeliveredCorrectRecipeServerRpc(int worth, int passionValue)
+    {
+        totalEarnings.Value += worth * (int)currentPassionMeterLevelSetting.passionMultiplier;
+        passionMeter.Value += passionValue;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void DeliveredIncorrectRecipeServerRpc()
+    {
+        var passionValue = passionMeter.Value;
+        if (passionValue > levelSettingSO.wrongRecipePenaltyForPassionMeter)
+        {
+            passionMeter.Value = passionValue - levelSettingSO.wrongRecipePenaltyForPassionMeter;
+        }
+        else
+        {
+            passionMeter.Value = 0f;
+        }
+    }
+
     private void TestPauseState()
     {
         foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
@@ -234,5 +290,52 @@ public class GameManager : NetworkBehaviour
 
         isGamePaused.Value = false;
         // all players are unpaused
+    }
+
+    private void UpdateCurrentPassionMeterSetting()
+    {
+        if (currentPassionMeterLevelSetting == null)
+        {
+            currentPassionMeterLevelSetting = levelSettingSO.passionMeterSO.GetPassionMeterLevelSetting(currentPassionMeterLevelSettingIndex);
+        }
+        else
+        {
+            if (passionMeter.Value >= currentPassionMeterLevelSetting.maxPassion)
+            {
+                currentPassionMeterLevelSettingIndex++;
+                if (currentPassionMeterLevelSettingIndex < levelSettingSO.passionMeterSO.passionMeterLevelCount)
+                {
+                    currentPassionMeterLevelSetting = levelSettingSO.passionMeterSO.GetPassionMeterLevelSetting(currentPassionMeterLevelSettingIndex);
+                }
+                else
+                {
+                    // max passion reached
+                }
+            }
+            else if (passionMeter.Value < currentPassionMeterLevelSetting.minPassion)
+            {
+                currentPassionMeterLevelSettingIndex--;
+                if (currentPassionMeterLevelSettingIndex >= 0)
+                {
+                    currentPassionMeterLevelSetting = levelSettingSO.passionMeterSO.GetPassionMeterLevelSetting(currentPassionMeterLevelSettingIndex);
+                }
+                else
+                {
+                    // min passion reached
+                }
+            }
+        }
+    }
+
+    private void HandlePassionLostPerSecond()
+    {
+        if (currentPassionMeterLevelSetting != null)
+        {
+            passionMeter.Value -= currentPassionMeterLevelSetting.passionLostPerSecond * Time.deltaTime;
+            if (passionMeter.Value < 0f)
+            {
+                passionMeter.Value = 0f;
+            }
+        }
     }
 }
