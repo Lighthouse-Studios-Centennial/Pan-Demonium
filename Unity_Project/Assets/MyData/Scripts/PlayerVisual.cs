@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerVisual : MonoBehaviour
 {
-    [SerializeField] private MeshRenderer headMeshRenderer;
-    [SerializeField] private MeshRenderer bodyMeshRenderer;
+    [SerializeField] private Renderer headMeshRenderer;
+    [SerializeField] private Renderer bodyMeshRenderer;
 
     private Material material;
 
