@@ -306,6 +306,7 @@ public class GameManager : NetworkBehaviour
                 if (currentPassionMeterLevelSettingIndex < levelSettingSO.passionMeterSO.passionMeterLevelCount)
                 {
                     currentPassionMeterLevelSetting = levelSettingSO.passionMeterSO.GetPassionMeterLevelSetting(currentPassionMeterLevelSettingIndex);
+                    passionMeter.Value += 50f;
                 }
                 else
                 {
@@ -331,10 +332,15 @@ public class GameManager : NetworkBehaviour
     {
         if (currentPassionMeterLevelSetting != null)
         {
-            passionMeter.Value -= currentPassionMeterLevelSetting.passionLostPerSecond * Time.deltaTime;
-            if (passionMeter.Value < 0f)
+            var pmv = passionMeter.Value;
+            var lost = currentPassionMeterLevelSetting.passionLostPerSecond * Time.deltaTime;
+            if (pmv >= lost)
             {
-                passionMeter.Value = 0f;
+                passionMeter.Value -= lost;
+            }
+            else
+            {
+                passionMeter.Value = 0;
             }
         }
     }

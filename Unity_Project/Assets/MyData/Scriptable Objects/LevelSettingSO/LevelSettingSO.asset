@@ -15,7 +15,7 @@ MonoBehaviour:
   levelId: 0
   levelName: Demo
   levelGameTime: 180
-  recipeLifeTime: 60
+  recipeLifeTime: 120
   waitingRecipeMax: 6
   deliverRecipeInterval: 10
   wrongRecipePenaltyForPassionMeter: 30
