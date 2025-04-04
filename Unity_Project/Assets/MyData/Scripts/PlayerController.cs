@@ -63,12 +63,14 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
     {
         InputHandler.Instance.OnInteractAction += OnInteractAction;
         InputHandler.Instance.OnInteractAltAction += OnInteractAltAction;
+        InputHandler.Instance.OnThrowAction += OnThorwAction;
     }
 
     private void OnDisable()
     {
         InputHandler.Instance.OnInteractAction -= OnInteractAction;
         InputHandler.Instance.OnInteractAltAction -= OnInteractAltAction;
+        InputHandler.Instance.OnThrowAction -= OnThorwAction;
     }
 
     private void OnInteractAltAction(object sender, EventArgs e)
@@ -88,6 +90,17 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
         if(selectedCounter != null)
         {
             selectedCounter.Interact(this);
+        }
+    }
+
+    private void OnThorwAction(object sender, EventArgs e)
+    {
+        Debug.Log("Try to throw");
+        if (!GameManager.Instance.IsGamePlaying()) { return; }
+
+        if(GetKitchenObject() != null)
+        {
+            GetKitchenObject().SetKitchenObjectParent(null);   
         }
     }
 

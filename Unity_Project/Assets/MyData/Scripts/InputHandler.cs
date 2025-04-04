@@ -20,6 +20,7 @@ public class InputHandler : MonoBehaviour
         Interact,
         Interact_Alt,
         Dash,
+        Throw,
         Pause,
 
         Move_Gamepad,
@@ -32,6 +33,7 @@ public class InputHandler : MonoBehaviour
     private PlayerInputMap inputActions;
     public event EventHandler OnInteractAction;
     public event EventHandler OnInteractAltAction;
+    public event EventHandler OnThrowAction;
     public event EventHandler OnPauseAction;
     public event EventHandler OnRebindBindingCompleted;
 
@@ -56,6 +58,7 @@ public class InputHandler : MonoBehaviour
     {
         inputActions.Player.Interact.performed += OnInteract;
         inputActions.Player.InteractAlt.performed += OnInteractAlt;
+        inputActions.Player.Throw.performed += OnThrow;
         inputActions.Player.Pause.performed += Pause_performed;
     }
 
@@ -72,6 +75,11 @@ public class InputHandler : MonoBehaviour
     private void OnInteract(InputAction.CallbackContext ctx)
     {
         OnInteractAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnThrow(InputAction.CallbackContext ctx)
+    {
+        OnThrowAction?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnDisable()
@@ -130,6 +138,10 @@ public class InputHandler : MonoBehaviour
                 break;
             case Bindings.Dash:
                 inputAction = inputActions.Player.Dash;
+                bindingIndex = 0;
+                break;
+            case Bindings.Throw:
+                inputAction = inputActions.Player.Throw;
                 bindingIndex = 0;
                 break;
             case Bindings.Pause:
@@ -197,6 +209,8 @@ public class InputHandler : MonoBehaviour
                 return inputActions.Player.InteractAlt.bindings[0].ToDisplayString();
             case Bindings.Dash:
                 return inputActions.Player.Dash.bindings[0].ToDisplayString();
+            case Bindings.Throw:
+                return inputActions.Player.Throw.bindings[0].ToDisplayString();
             case Bindings.Pause:
                 return inputActions.Player.Pause.bindings[0].ToDisplayString();
             case Bindings.Move_Gamepad:
