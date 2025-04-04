@@ -12,6 +12,7 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
     public static event EventHandler OnAnyPlayerPickedupSomething;
 
     public event EventHandler OnPickedupSomething;
+    public event EventHandler OnDroppedSomething;
 
     public class OnSelectedCounterChangedEventArgs : EventArgs { public BaseCounter selectedCounter; }
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
@@ -310,7 +311,11 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
         }
     }
 
-    public void ClearKitchenObject() { kitchenObject = null; }
+    public void ClearKitchenObject() 
+    {
+        kitchenObject = null;
+        OnDroppedSomething?.Invoke(this, EventArgs.Empty);
+    }
 
     public bool HasKitchenObject() { return kitchenObject != null; }
 

@@ -191,6 +191,7 @@ public class GameManager : NetworkBehaviour
                     gameplayTimer.Value = maxGameplayTimer;
                 }
                 break;
+
             case State.GamePlaying:
                 gameplayTimer.Value -= Time.deltaTime;
                 if (gameplayTimer.Value < 0f)
@@ -199,8 +200,10 @@ public class GameManager : NetworkBehaviour
                 }
                 HandlePassionLostPerSecond();
                 break;
+
             case State.GameOver:
                 break;
+
             default:
                 break;
         }
