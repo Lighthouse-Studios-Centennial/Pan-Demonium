@@ -100,8 +100,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70f40506b8e0e3b47af3d0b0ef6dda0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  headMeshRenderer: {fileID: 4775742122551074055}
-  bodyMeshRenderer: {fileID: 4775742122551074055}
+  renderers:
+  - {fileID: 4775742122551074055}
 --- !u!137 &4775742122551074055 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 6302123337183601790, guid: 8795a549dc818a640aa45654b50436a0,

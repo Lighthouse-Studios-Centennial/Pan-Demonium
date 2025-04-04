@@ -3691,7 +3691,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  playerColorSO: {fileID: 11400000, guid: 9400b7b2e2fc77944af156d1e39365fa, type: 2}
+  playerColorSO: {fileID: 11400000, guid: 896bdc8a048b01545b77f49366df832b, type: 2}
   kitchenObjectsListSO: {fileID: 11400000, guid: 5841c96ef629af540bdf1851cdfd494b,
     type: 2}
 --- !u!4 &1096992531

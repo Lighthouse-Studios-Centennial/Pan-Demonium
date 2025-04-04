@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class PlayerVisual : MonoBehaviour
 {
-    [SerializeField] private MeshRenderer[] meshRenderer;
+    [SerializeField] private Renderer[] renderers;
 
     private Material material;
 
     private void Awake()
     {
-        material = new(meshRenderer[0].material);
+        material = new(renderers[0].material);
 
-        foreach (var renderer in meshRenderer)
+        foreach (var renderer in renderers)
         {
             renderer.material = material;
         }

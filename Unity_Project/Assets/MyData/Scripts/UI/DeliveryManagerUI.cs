@@ -6,9 +6,12 @@ public class DeliveryManagerUI : MonoBehaviour
     [SerializeField] private Transform recipeContainer;
     [SerializeField] private Transform recipeTemplate;
 
-    bool isRecipeSpawned = false;
-    List<RecipeSO> curWaitingRecipiesList = new List<RecipeSO>();
-    List<RecipeSingleUI> curRecipeUIList = new List<RecipeSingleUI>();
+    private List<RecipeSingleUI> curRecipeUIList;
+
+    private void Awake()
+    {
+        curRecipeUIList = new List<RecipeSingleUI>();
+    }
 
     private void Start()
     {
