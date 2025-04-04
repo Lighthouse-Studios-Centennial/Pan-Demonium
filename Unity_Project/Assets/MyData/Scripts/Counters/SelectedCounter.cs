@@ -54,7 +54,6 @@ public class SelectedCounter : MonoBehaviour
 
     private void Hide()
     {
-        Debug.Log(transform.name);
         foreach (GameObject go in selectedVisualGO)
         {
             go.SetActive(false);

@@ -16,3 +16,10 @@ MonoBehaviour:
   kitchenObjectSOList:
   - {fileID: 11400000, guid: 8fd8915c7a4e00245b173aff88b5317e, type: 2}
   - {fileID: 11400000, guid: 8ed84c88d80981f438a8fa20f0ddffca, type: 2}
+  recipeId: 0
+  recipeLifeTime: 0
+  maxRecipeLifeTime: 0
+  maxWorth: 50
+  midWorth: 35
+  minWorth: 20
+  passionValue: 50

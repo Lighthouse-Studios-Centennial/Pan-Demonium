@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +5,13 @@ public class DeliveryManagerUI : MonoBehaviour
 {
     [SerializeField] private Transform recipeContainer;
     [SerializeField] private Transform recipeTemplate;
+
+    private List<RecipeSingleUI> curRecipeUIList;
+
+    private void Awake()
+    {
+        curRecipeUIList = new List<RecipeSingleUI>();
+    }
 
     private void Start()
     {
@@ -26,20 +32,31 @@ public class DeliveryManagerUI : MonoBehaviour
 
     public void UpdateVisual()
     {
-        foreach (Transform child in recipeContainer.transform)
-        {
-            if(child == recipeTemplate)
-                continue;
+        var waitingRecipiesList = DeliveryManager.Instance.GetWaitingRecipeSOList();
 
-            Destroy(child.gameObject);
+        for(int i = 0; i < curRecipeUIList.Count; i++)
+        {
+            if (waitingRecipiesList.Exists(x => x.recipeId == curRecipeUIList[i].GetRecipeId()))
+            {
+                continue;
+            }
+            curRecipeUIList[i].Deactivate();
+            curRecipeUIList.RemoveAt(i);
+            i--;
         }
 
-        var waitingRecipiesList = DeliveryManager.Instance.GetWaitingRecipeSOList();
-        foreach (var waitingRecipe in waitingRecipiesList)
+        for (int i = 0; i < waitingRecipiesList.Count; i++)
         {
-            var waitingRecipeUI = Instantiate(recipeTemplate, recipeContainer);
-            waitingRecipeUI.gameObject.SetActive(true);
-            waitingRecipeUI.GetComponent<RecipeSingleUI>().SetRecipeSO(waitingRecipe);
+            if(curRecipeUIList.Exists(x => x.GetRecipeId() == waitingRecipiesList[i].recipeId))
+            {
+                continue;
+            }
+            var waitingRecipeUI = Instantiate(recipeTemplate, recipeContainer).GetComponent<RecipeSingleUI>();
+            waitingRecipeUI.SetRecipeSO(waitingRecipiesList[i]);
+            waitingRecipeUI.SetLifeTime(DeliveryManager.Instance.GetRecipeLifeTime());
+            waitingRecipeUI.Activate();
+
+            curRecipeUIList.Add(waitingRecipeUI);
         }
     }
 }

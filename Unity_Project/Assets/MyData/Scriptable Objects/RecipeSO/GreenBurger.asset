@@ -17,3 +17,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: db8f2d08cdad3e64a9027fa2c010117b, type: 2}
   - {fileID: 11400000, guid: 8fd8915c7a4e00245b173aff88b5317e, type: 2}
   - {fileID: 11400000, guid: 7def6fe9d97fcc444aa885cdd33a3445, type: 2}
+  recipeId: 0
+  recipeLifeTime: 0
+  maxRecipeLifeTime: 0
+  maxWorth: 50
+  midWorth: 35
+  minWorth: 20
+  passionValue: 50

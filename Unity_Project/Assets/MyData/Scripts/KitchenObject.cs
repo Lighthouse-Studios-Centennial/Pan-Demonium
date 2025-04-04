@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using DG.Tweening;
 
 public class KitchenObject : NetworkBehaviour
 {
@@ -20,9 +21,16 @@ public class KitchenObject : NetworkBehaviour
         followTransform = GetComponent<FollowTransform>();
     }
 
-    public void SetKitchenObjectParent(IKitchenObjectParent kitchenObjectParent) 
+    public void SetKitchenObjectParent(IKitchenObjectParent kitchenObjectParent)
     {
-        SetKitchenObjectParentServerRpc(kitchenObjectParent.GetNetworkObject());   
+        if (kitchenObjectParent == null)
+        {
+            // Debug.LogError("KitchenObjectParent is null");
+            SetKitchenObjectParentServerRpc();
+            return;
+        }
+
+        SetKitchenObjectParentServerRpc(kitchenObjectParent.GetNetworkObject());
     }
 
     public void DestroySelf()
@@ -60,6 +68,12 @@ public class KitchenObject : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
+    private void SetKitchenObjectParentServerRpc()
+    {
+        SetKitchenObjectParentClientRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
     private void SetKitchenObjectParentServerRpc(NetworkObjectReference kitchenObjectParentNetworkObjectRef)
     {
         SetKitchenObjectParentClientRpc(kitchenObjectParentNetworkObjectRef);
@@ -83,4 +97,22 @@ public class KitchenObject : NetworkBehaviour
 
         followTransform.SetTargetTransform(kitchenObjectParent.GetKitchenObjectFollowTransform());
     }
+
+    [ClientRpc]
+    private void SetKitchenObjectParentClientRpc()
+    {
+        var parentPosition = kitchenObjectParent.GetKitchenObjectFollowTransform().position;
+        var parentRotation = kitchenObjectParent.GetKitchenObjectFollowTransform().rotation;
+        var direction = kitchenObjectParent.GetKitchenObjectFollowTransform().forward;
+        var throwDistance = 4f;
+        this.kitchenObjectParent?.ClearKitchenObject();
+
+        followTransform.SetTargetTransform(null);
+
+        var sequence = DOTween.Sequence();
+
+        sequence.Append(transform.DOJump(parentPosition + direction * throwDistance - new Vector3(0, 1.5f, 0), 0.8f, 1, 0.3f).SetEase(Ease.OutFlash));
+        sequence.Append(transform.DOMove(new Vector3(direction.x, 0, direction.y) * 2, 0.2f).SetRelative(true).SetEase(Ease.OutFlash));
+    }
+
 }

@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class PlayerVisual : MonoBehaviour
 {
-    [SerializeField] private Renderer headMeshRenderer;
-    [SerializeField] private Renderer bodyMeshRenderer;
+    [SerializeField] private Renderer[] renderers;
 
     private Material material;
 
     private void Awake()
     {
-        material = new(headMeshRenderer.material);
-        headMeshRenderer.material = material;
-        bodyMeshRenderer.material = material;
+        material = new(renderers[0].material);
+
+        foreach (var renderer in renderers)
+        {
+            renderer.material = material;
+        }
     }
 
     public void SetPlayerColor(Color color)
