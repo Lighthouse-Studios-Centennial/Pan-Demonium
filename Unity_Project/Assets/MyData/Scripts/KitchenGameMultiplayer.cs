@@ -18,10 +18,12 @@ public class KitchenGameMultiplayer : NetworkBehaviour
     public event EventHandler OnTryingToJoin;
     public event EventHandler OnFailedToJoin;
     public event EventHandler OnPlayerDataNetworkListChanged;
+    public event Action<int> OnGameLevelIndexChanged;
 
     [SerializeField] private KitchenObjectsListSO kitchenObjectsListSO;
 
     private NetworkList<PlayerData> playerDataNetworkList;
+    private int currentGameLevelIndex = -1;
     private string playerName;
 
     private void Awake()
@@ -91,6 +93,7 @@ public class KitchenGameMultiplayer : NetworkBehaviour
         playerDataNetworkList.Add(new PlayerData { clientId = clientId, colorId = GetFirstUsusedColorId(), });
         SetPlayerNameServerRpc(GetPlayerName());
         SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
+        ChangeGameLevelServerRpc(currentGameLevelIndex);
     }
 
     private void NetworkManager_OnConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
@@ -265,6 +268,30 @@ public class KitchenGameMultiplayer : NetworkBehaviour
     public PlayerData GetLocalPlayerData()
     {
         return GetPlayerDataFromClientId(NetworkManager.Singleton.LocalClientId);
+    }
+
+    public int GetCurrentGameLevelIndex()
+    {
+        return currentGameLevelIndex;
+    }
+
+    public void ChangeGameLevel(int levelId)
+    {
+        ChangeGameLevelServerRpc(levelId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ChangeGameLevelServerRpc(int levelId)
+    {
+        ChangeGameLevelClientRpc(levelId);
+    }
+
+    [ClientRpc]
+    private void ChangeGameLevelClientRpc(int levelId)
+    {
+        currentGameLevelIndex = levelId;
+        OnGameLevelIndexChanged?.Invoke(levelId);
+        Debug.Log("Game Level Changed: " + levelId);
     }
 
     public void ChangePlayerColor(int colorId)
