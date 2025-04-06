@@ -11,10 +11,13 @@ public class LobbyCreateUI : MonoBehaviour
     [SerializeField] private Button closeBtn;
     [SerializeField] private TMP_InputField lobbyNameInput;
 
-    private string lobbyName = "Lobby #";
+    private string lobbyName = string.Empty;
 
     private void Awake()
     {
+        lobbyName = $"Lobby #{Random.Range(0, int.MaxValue)}";
+        lobbyNameInput.text = lobbyName;
+
         closeBtn.onClick.AddListener(Hide);
 
         createPrivateBtn.onClick.AddListener(() =>
