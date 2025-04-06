@@ -20,13 +20,14 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private LayerMask counterLayerMask;
     [SerializeField] private LayerMask collisionLayerMask;
+    [SerializeField] private LayerMask kitchenObjectLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
     [SerializeField] private PlayerVisual playerVisual;
-
-    public bool IsWalking { get; private set; }
+public NetworkVariable<bool> IsWalking { get; private set; } = new NetworkVariable<bool>(false);
     private Vector3 lastInteractDir;
     private BaseCounter selectedCounter;
-    private KitchenObject kitchenObject;
+    private KitchenObject selectedKitchenObject;
+    private KitchenObject holdingKitchenObject;
 
     private bool isDashing = false;
     private float dashInitialSpeedMultiplier = 6f;
@@ -64,14 +65,14 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
     {
         InputHandler.Instance.OnInteractAction += OnInteractAction;
         InputHandler.Instance.OnInteractAltAction += OnInteractAltAction;
-        InputHandler.Instance.OnThrowAction += OnThorwAction;
+        InputHandler.Instance.OnThrowAction += OnThrowAction;
     }
 
     private void OnDisable()
     {
         InputHandler.Instance.OnInteractAction -= OnInteractAction;
         InputHandler.Instance.OnInteractAltAction -= OnInteractAltAction;
-        InputHandler.Instance.OnThrowAction -= OnThorwAction;
+        InputHandler.Instance.OnThrowAction -= OnThrowAction;
     }
 
     private void OnInteractAltAction(object sender, EventArgs e)
@@ -82,6 +83,10 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
         {
             selectedCounter.InteractAlt(this);
         }
+        //else if (selectedKitchenObject != null)
+        //{
+        //    selectedKitchenObject.SetKitchenObjectParent(this);
+        //}
     }
 
     private void OnInteractAction(object sender, EventArgs e)
@@ -92,16 +97,22 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
         {
             selectedCounter.Interact(this);
         }
+        else if(selectedKitchenObject != null && GetKitchenObject() == null)
+        {
+            selectedKitchenObject.SetKitchenObjectParent(this);
+        }
     }
 
-    private void OnThorwAction(object sender, EventArgs e)
+    private void OnThrowAction(object sender, EventArgs e)
     {
         Debug.Log("Try to throw");
-        if (!GameManager.Instance.IsGamePlaying()) { return; }
+        if (!GameManager.Instance.IsGamePlaying() || !IsOwner) { return; }
 
         if(GetKitchenObject() != null)
         {
-            GetKitchenObject().SetKitchenObjectParent(null);   
+            var throwPos = GetKitchenObject().transform.position;
+            var throwDir = transform.forward;
+            GetKitchenObject().ThrowKitchenObject(NetworkObject, throwPos, throwDir);
         }
     }
 
@@ -147,6 +158,25 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
         else
         {
             SetSelectedCounter(null);
+        }
+
+        if(selectedCounter == null)
+        {
+            if (Physics.Raycast(transform.position, lastInteractDir, out hit, 1f, kitchenObjectLayerMask))
+            {
+                if (hit.transform.TryGetComponent<KitchenObject>(out var ko))
+                {
+                    SetSelectedKitchenObject(ko);
+                }
+                else
+                {
+                    SetSelectedKitchenObject(null);
+                }
+            }
+            else
+            {
+                SetSelectedKitchenObject(null);
+            }
         }
     }
 
@@ -279,7 +309,7 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
             transform.position += moveDistance * moveDir;
         }
 
-        IsWalking = moveDir != Vector3.zero;
+        IsWalking.Value = moveDir != Vector3.zero;
 
         float rotationSpeed = 10f;
         transform.forward = Vector3.Slerp(transform.forward, oriMoveDir, Time.deltaTime * rotationSpeed);
@@ -308,14 +338,18 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
         selectedCounter = counter;
         OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs { selectedCounter = selectedCounter });
     }
+    private void SetSelectedKitchenObject(KitchenObject ko)
+    {
+        selectedKitchenObject = ko;
+    }
 
     public Transform GetKitchenObjectFollowTransform() { return kitchenObjectHoldPoint; }
 
-    public KitchenObject GetKitchenObject() { return kitchenObject; }
+    public KitchenObject GetKitchenObject() { return holdingKitchenObject; }
 
     public void SetKitchenObject(KitchenObject kitchenObject) 
     {
-        this.kitchenObject = kitchenObject; 
+        this.holdingKitchenObject = kitchenObject; 
 
         if(kitchenObject !=  null)
         {
@@ -326,11 +360,11 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
 
     public void ClearKitchenObject() 
     {
-        kitchenObject = null;
+        holdingKitchenObject = null;
         OnDroppedSomething?.Invoke(this, EventArgs.Empty);
     }
 
-    public bool HasKitchenObject() { return kitchenObject != null; }
+    public bool HasKitchenObject() { return holdingKitchenObject != null; }
 
     public NetworkObject GetNetworkObject()
     {

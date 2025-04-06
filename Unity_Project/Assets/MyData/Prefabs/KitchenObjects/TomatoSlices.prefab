@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: -5386638627377296416}
   - component: {fileID: 9076824129261001141}
   - component: {fileID: 2568004432001899741}
-  m_Layer: 0
+  - component: {fileID: -2481591081921682372}
+  m_Layer: 8
   m_Name: TomatoSlices
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,6 +75,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   kitchenObjectSO: {fileID: 11400000, guid: 8ed84c88d80981f438a8fa20f0ddffca, type: 2}
+  collisionLayerMask:
+    serializedVersion: 2
+    m_Bits: 192
 --- !u!114 &2568004432001899741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,6 +90,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99661f7fe47e0ed4ebe384b2a43cae15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!135 &-2481591081921682372
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5617706009451040039}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0.2, z: 0}
 --- !u!1001 &830926685391333079
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -94,6 +119,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 134702013584561833}
     m_Modifications:
+    - target: {fileID: 2636495248237651546, guid: fb403d1efda6baf4190c507841617408,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 3812876574508226176, guid: fb403d1efda6baf4190c507841617408,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -148,6 +178,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: TomatoSlices_Visual
+      objectReference: {fileID: 0}
+    - target: {fileID: 3812876574508226177, guid: fb403d1efda6baf4190c507841617408,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4606803130808482199, guid: fb403d1efda6baf4190c507841617408,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6095580341081476197, guid: fb403d1efda6baf4190c507841617408,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

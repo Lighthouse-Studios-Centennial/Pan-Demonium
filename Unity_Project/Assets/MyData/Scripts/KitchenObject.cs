@@ -7,7 +7,7 @@ using DG.Tweening;
 public class KitchenObject : NetworkBehaviour
 {
     [SerializeField] private KitchenObjectSO kitchenObjectSO;
-
+    [SerializeField] private LayerMask collisionLayerMask;
     private FollowTransform followTransform;
 
     private IKitchenObjectParent kitchenObjectParent;
@@ -16,21 +16,55 @@ public class KitchenObject : NetworkBehaviour
 
     public IKitchenObjectParent GetKitchenObjectParent() { return kitchenObjectParent; }
 
+    private bool isThrowing = false;
+    private float gravity = 9.81f;
+    Sequence throwTween;
+
     protected virtual void Awake()
     {
         followTransform = GetComponent<FollowTransform>();
     }
+    private void Update()
+    {
+        if (isThrowing)
+        {
+            Collider[] hits = Physics.OverlapSphere(transform.position, 0.7f, collisionLayerMask);
+            foreach (var hit in hits)
+            {
+                if (hit.gameObject != this.gameObject)
+                {
+                    Debug.Log("Fake collision with " + hit.name);
+                    throwTween.Pause();
 
+                    hit.TryGetComponent(out IKitchenObjectParent kitchenObjectParent);
+                    if (kitchenObjectParent != null && kitchenObjectParent is not ContainerCounter && !kitchenObjectParent.HasKitchenObject())
+                    {
+                        this.SetKitchenObjectParent(kitchenObjectParent);
+                    }
+                    else
+                    {
+                        //fall speed related to gravaty
+                        var fallSpeed = transform.position.y / gravity;
+                        transform.DOMoveY(0, fallSpeed).SetEase(Ease.Linear).OnComplete(() =>
+                        {
+                            transform.position = new Vector3(transform.position.x, 0, transform.position.z);
+                        });
+                    }
+
+                    isThrowing = false;
+                    break;
+                }
+            }
+        }
+    }
     public void SetKitchenObjectParent(IKitchenObjectParent kitchenObjectParent)
     {
-        if (kitchenObjectParent == null)
-        {
-            // Debug.LogError("KitchenObjectParent is null");
-            SetKitchenObjectParentServerRpc();
-            return;
-        }
-
         SetKitchenObjectParentServerRpc(kitchenObjectParent.GetNetworkObject());
+    }
+
+    public void ThrowKitchenObject(NetworkObjectReference objectRef, Vector3 throwPos, Vector3 throwDir)
+    {
+        ThrowKitchenObjectServerRpc(objectRef, throwPos, throwDir);
     }
 
     public void DestroySelf()
@@ -68,9 +102,9 @@ public class KitchenObject : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void SetKitchenObjectParentServerRpc()
+    private void ThrowKitchenObjectServerRpc(NetworkObjectReference objectRef, Vector3 throwPos, Vector3 throwDir)
     {
-        SetKitchenObjectParentClientRpc();
+        ThrowKitchenObjectClientRpc(objectRef, throwPos, throwDir);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -99,20 +133,26 @@ public class KitchenObject : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void SetKitchenObjectParentClientRpc()
+    private void ThrowKitchenObjectClientRpc(NetworkObjectReference objectRef, Vector3 throwPos, Vector3 throwDir)
     {
-        var parentPosition = kitchenObjectParent.GetKitchenObjectFollowTransform().position;
-        var parentRotation = kitchenObjectParent.GetKitchenObjectFollowTransform().rotation;
-        var direction = kitchenObjectParent.GetKitchenObjectFollowTransform().forward;
-        var throwDistance = 4f;
-        this.kitchenObjectParent?.ClearKitchenObject();
+        if (objectRef.TryGet(out var kitchenObjectNetworkObject))
+        {
+            var throwDistance = 5f;
 
-        followTransform.SetTargetTransform(null);
+            this.kitchenObjectParent?.ClearKitchenObject();
+            followTransform.SetTargetTransform(null);
 
-        var sequence = DOTween.Sequence();
+            Vector3 target = throwPos + throwDir * throwDistance - new Vector3(0, 1.5f, 0);
 
-        sequence.Append(transform.DOJump(parentPosition + direction * throwDistance - new Vector3(0, 1.5f, 0), 0.8f, 1, 0.3f).SetEase(Ease.OutFlash));
-        sequence.Append(transform.DOMove(new Vector3(direction.x, 0, direction.y) * 2, 0.2f).SetRelative(true).SetEase(Ease.OutFlash));
+            throwTween = DOTween.Sequence();
+            throwTween.Append(transform.DOJump(target, 1f, 1, 1f).SetEase(Ease.OutExpo));
+            throwTween.OnComplete(() =>
+            {
+                isThrowing = false;
+            });
+
+            isThrowing = true;
+        }
     }
 
 }

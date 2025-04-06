@@ -19,7 +19,7 @@ public class PlayerSounds : MonoBehaviour
         if(footstepTimer > maxFootstepTimer)
         {
             footstepTimer = 0;
-            if (playerController.IsWalking)
+            if (playerController.IsWalking.Value)
             {
                 float volume = 1f;
                 AudioManager.Instance.PlayFootstepSound(playerController.transform.position, volume);

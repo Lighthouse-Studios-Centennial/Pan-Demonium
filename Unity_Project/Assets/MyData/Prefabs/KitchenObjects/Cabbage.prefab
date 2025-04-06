@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: -1061815264661924905}
   - component: {fileID: 9076824129261001141}
   - component: {fileID: -3680854032366460371}
-  m_Layer: 0
+  - component: {fileID: -2547723525381773296}
+  m_Layer: 8
   m_Name: Cabbage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,6 +75,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   kitchenObjectSO: {fileID: 11400000, guid: 132d9a2c2a8bc084a9bd6955f9fdcfaa, type: 2}
+  collisionLayerMask:
+    serializedVersion: 2
+    m_Bits: 192
 --- !u!114 &-3680854032366460371
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,6 +90,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99661f7fe47e0ed4ebe384b2a43cae15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!135 &-2547723525381773296
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5617706009451040039}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0.2, z: 0}
 --- !u!1001 &5088520819559707703
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -148,6 +173,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Cabbage_Visual
+      objectReference: {fileID: 0}
+    - target: {fileID: 3812876574508226177, guid: 259702638197d9246bfc6f2b0fe88c09,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6979682845569653684, guid: 259702638197d9246bfc6f2b0fe88c09,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

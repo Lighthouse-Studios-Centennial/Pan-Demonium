@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 3660244076650647073}
   - component: {fileID: 9076824129261001141}
   - component: {fileID: 665951459803767074}
-  m_Layer: 0
+  - component: {fileID: 1480694310831758097}
+  m_Layer: 8
   m_Name: CabbageSlices
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,6 +75,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   kitchenObjectSO: {fileID: 11400000, guid: 8fd8915c7a4e00245b173aff88b5317e, type: 2}
+  collisionLayerMask:
+    serializedVersion: 2
+    m_Bits: 192
 --- !u!114 &665951459803767074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,6 +90,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99661f7fe47e0ed4ebe384b2a43cae15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!135 &1480694310831758097
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5617706009451040039}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1749763189924587417
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -148,6 +173,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: CabbageSliced_Visual
+      objectReference: {fileID: 0}
+    - target: {fileID: 3812876574508226177, guid: 44b7e90f95929c04c8394768d8bd1d14,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5171812715647440308, guid: 44b7e90f95929c04c8394768d8bd1d14,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6482078210588606160, guid: 44b7e90f95929c04c8394768d8bd1d14,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6495542584070377368, guid: 44b7e90f95929c04c8394768d8bd1d14,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543119346690908441, guid: 44b7e90f95929c04c8394768d8bd1d14,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8038834698182086962, guid: 44b7e90f95929c04c8394768d8bd1d14,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
