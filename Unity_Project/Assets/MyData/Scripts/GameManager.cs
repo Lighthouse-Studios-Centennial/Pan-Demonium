@@ -78,8 +78,21 @@ public class GameManager : NetworkBehaviour
 
         // Enable Game Environment
         int selectedLevelIndex = KitchenGameMultiplayer.Instance.GetCurrentGameLevelIndex();
-        Debug.Log($"Selected Level Index: {selectedLevelIndex}");
-        levels[selectedLevelIndex].SetActive(true);
+
+        if (selectedLevelIndex < levels.Length)
+        {
+            Debug.Log($"Selected Level Index: {selectedLevelIndex}");
+        }
+        else
+        {
+            Debug.LogError($"Selected Level Index {selectedLevelIndex} is out of bounds. Defaulting to 0.");
+            selectedLevelIndex = 0;
+        }
+
+        for (int i = 0; i < levels.Length; i++)
+        {
+            levels[i].SetActive(i == selectedLevelIndex);
+        }
     }
 
     public override void OnNetworkSpawn()
