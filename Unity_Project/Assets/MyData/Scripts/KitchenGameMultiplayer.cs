@@ -23,7 +23,7 @@ public class KitchenGameMultiplayer : NetworkBehaviour
     [SerializeField] private KitchenObjectsListSO kitchenObjectsListSO;
 
     private NetworkList<PlayerData> playerDataNetworkList;
-    private int currentGameLevelIndex = -1;
+    private int currentGameLevelIndex = 0;
     private string playerName;
 
     private void Awake()

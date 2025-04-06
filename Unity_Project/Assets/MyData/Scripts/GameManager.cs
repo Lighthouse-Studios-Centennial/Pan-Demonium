@@ -1,11 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UniRx;
-using Unity.Profiling;
 
 public class GameManager : NetworkBehaviour
 {
@@ -26,6 +23,8 @@ public class GameManager : NetworkBehaviour
 
     [SerializeField] private Transform playerPrefab;
     [SerializeField] private LevelSettingSO levelSettingSO;
+    [SerializeField] private GameObject[] levels;
+
     private PassionMeterLevelSetting currentPassionMeterLevelSetting;
     private int currentPassionMeterLevelSettingIndex = 0;
 
@@ -76,6 +75,24 @@ public class GameManager : NetworkBehaviour
 
         maxGameplayTimer = levelSettingSO.levelGameTime;
         UpdateCurrentPassionMeterSetting();
+
+        // Enable Game Environment
+        int selectedLevelIndex = KitchenGameMultiplayer.Instance.GetCurrentGameLevelIndex();
+
+        if (selectedLevelIndex < levels.Length)
+        {
+            Debug.Log($"Selected Level Index: {selectedLevelIndex}");
+        }
+        else
+        {
+            Debug.LogError($"Selected Level Index {selectedLevelIndex} is out of bounds. Defaulting to 0.");
+            selectedLevelIndex = 0;
+        }
+
+        for (int i = 0; i < levels.Length; i++)
+        {
+            levels[i].SetActive(i == selectedLevelIndex);
+        }
     }
 
     public override void OnNetworkSpawn()

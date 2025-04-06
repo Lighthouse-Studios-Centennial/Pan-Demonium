@@ -5,7 +5,7 @@ public class LevelInfoSingleUI : MonoBehaviour
 {
     [SerializeField] private GameObject selectedGO;
 
-    private int levelIndex = -1;
+    [SerializeField] private int levelIndex = -1;
 
     private void Awake()
     {
@@ -27,10 +27,5 @@ public class LevelInfoSingleUI : MonoBehaviour
     {
         selectedGO.SetActive(selectedLevelIndex == levelIndex);
         Debug.Log("Selected level index from Single ui: " + selectedLevelIndex);
-    }
-
-    public void SetLevelIndex(int levelIndex)
-    {
-        this.levelIndex = levelIndex;
     }
 }
