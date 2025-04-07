@@ -9,6 +9,7 @@ public class LevelSettingSO : ScriptableObject
     public float recipeLifeTime; // in seconds
     public int waitingRecipeMax;
     public float deliverRecipeInterval; // in seconds
-    public int wrongRecipePenaltyForPassionMeter; // in seconds
+    public int wrongRecipePenaltyForPassionMeter;
+    public int wrongRecipePenaltyForMoney;
     public PassionMeterSO passionMeterSO;
 }

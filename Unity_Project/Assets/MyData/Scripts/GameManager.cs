@@ -47,6 +47,10 @@ public class GameManager : NetworkBehaviour
     private Dictionary<ulong, bool> playerPausedDictionary;
     private bool autoTestPauseStateAfterDisconnect;
 
+    // Scoring
+    public int RecipeEarnings = 0;
+    public int PassionMeterBonus = 0;
+    
     private void Awake()
     {
         Instance = this;
@@ -257,6 +261,8 @@ public class GameManager : NetworkBehaviour
     public float GetRecipeLifeTime() => levelSettingSO.recipeLifeTime;
     public int GetWaitingRecipeMax() => levelSettingSO.waitingRecipeMax;
     public float GetDeliverRecipeInterval() => levelSettingSO.deliverRecipeInterval;
+    public int GetWrongRecipePenaltyForMoney() => levelSettingSO.wrongRecipePenaltyForMoney;
+    public int GetTotalEarning() => totalEarnings.Value;
 
 
     [ServerRpc(RequireOwnership = false)]
@@ -278,7 +284,10 @@ public class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void DeliveredCorrectRecipeServerRpc(int worth, int passionValue)
     {
-        totalEarnings.Value += worth * (int)currentPassionMeterLevelSetting.passionMultiplier;
+        var totalEarning = worth * (int)currentPassionMeterLevelSetting.passionMultiplier;
+        PassionMeterBonus += totalEarning - worth;
+        RecipeEarnings += worth;
+        totalEarnings.Value += totalEarning;
         passionMeter.Value += passionValue;
     }
 
@@ -294,6 +303,8 @@ public class GameManager : NetworkBehaviour
         {
             passionMeter.Value = 0f;
         }
+
+        totalEarnings.Value -= levelSettingSO.wrongRecipePenaltyForMoney;
     }
 
     private void TestPauseState()

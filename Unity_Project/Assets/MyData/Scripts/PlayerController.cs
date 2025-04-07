@@ -144,40 +144,43 @@ public NetworkVariable<bool> IsWalking { get; private set; } = new NetworkVariab
             lastInteractDir = moveDir;
 
         const float maxInteractionDistance = 2f;
-        if(Physics.Raycast(transform.position, lastInteractDir, out RaycastHit hit, maxInteractionDistance, counterLayerMask))
-        {
-            if(hit.transform.TryGetComponent<BaseCounter>(out var baseCounter))
-            {
-                SetSelectedCounter(baseCounter);
-            }
-            else
-            {
-                SetSelectedCounter(null);
-            }
-        }
-        else
-        {
-            SetSelectedCounter(null);
-        }
 
-        if(selectedCounter == null)
+        if (Physics.Raycast(transform.position, lastInteractDir, out RaycastHit hit, 1.5f, kitchenObjectLayerMask))
         {
-            if (Physics.Raycast(transform.position, lastInteractDir, out hit, 1f, kitchenObjectLayerMask))
+            if (hit.transform.TryGetComponent<KitchenObject>(out var ko))
             {
-                if (hit.transform.TryGetComponent<KitchenObject>(out var ko))
-                {
-                    SetSelectedKitchenObject(ko);
-                }
-                else
-                {
-                    SetSelectedKitchenObject(null);
-                }
+                SetSelectedKitchenObject(ko);
             }
             else
             {
                 SetSelectedKitchenObject(null);
             }
         }
+        else
+        {
+            SetSelectedKitchenObject(null);
+        }
+
+        if(selectedKitchenObject == null)
+        {
+            if (Physics.Raycast(transform.position, lastInteractDir, out hit, maxInteractionDistance, counterLayerMask))
+            {
+                if (hit.transform.TryGetComponent<BaseCounter>(out var baseCounter))
+                {
+                    SetSelectedCounter(baseCounter);
+                }
+                else
+                {
+                    SetSelectedCounter(null);
+                }
+            }
+            else
+            {
+                SetSelectedCounter(null);
+            }
+        }
+        
+
     }
 
     //private void HandleMovement()

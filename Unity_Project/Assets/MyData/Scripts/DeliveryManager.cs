@@ -21,6 +21,8 @@ public class DeliveryManager : NetworkBehaviour
     private List<RecipeSO> waitingRecipiesList = new();
 
     public int SuccessfulDeliveries { get; private set; }
+    public int FailedDeliveries { get; private set; }
+
     private int waitingRecipeMax = 6;
     private float recipeTimer = 4f;
     private float recipeTimerMax = 4f;
@@ -130,6 +132,8 @@ public class DeliveryManager : NetworkBehaviour
     [ClientRpc]
     private void DeliverIncorrectRecipeClientRpc()
     {
+
+        FailedDeliveries++;
         OnRecipeFailed?.Invoke(this, EventArgs.Empty);
     }
 
@@ -164,6 +168,7 @@ public class DeliveryManager : NetworkBehaviour
     [ClientRpc]
     private void RecipeOutdatedClientRpc(int waitingRecipeSOIndex)
     {
+        FailedDeliveries++;
         waitingRecipiesList.RemoveAt(waitingRecipeSOIndex);
         OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
     }

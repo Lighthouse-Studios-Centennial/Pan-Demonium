@@ -68,7 +68,7 @@ public class RecipeSingleUI : MonoBehaviour
 
     private void Update()
     {
-        if (!isActivated)
+        if (!isActivated || GameManager.Instance.IsGameOver())
             return;
 
         recipeSO.recipeLifeTime -= Time.deltaTime;
