@@ -342,8 +342,9 @@ public class KitchenGameMultiplayer : NetworkBehaviour
         return -1;
     }
 
-    public void KickPlayer(ulong clientId)
+    public void KickPlayer(ulong clientId, string kickReason = "")
     {
-        NetworkManager.Singleton.DisconnectClient(clientId);
+        NetworkManager.Singleton.DisconnectClient(clientId, kickReason);
+        NetworkManager_Server_OnClientDisconnectCallback(clientId);
     }
 }

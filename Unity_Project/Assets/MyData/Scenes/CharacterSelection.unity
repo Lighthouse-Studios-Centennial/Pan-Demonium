@@ -3056,7 +3056,7 @@ GameObject:
   - component: {fileID: 525475741}
   - component: {fileID: 525475742}
   m_Layer: 5
-  m_Name: HostDisconnectUI
+  m_Name: HostKickedUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3093,7 +3093,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 525475740}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c04e80a8309f2154a9899d5c416879c0, type: 3}
+  m_Script: {fileID: 11500000, guid: 524a5465361a95742a1a7fb3fbeccee9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   playAgainBtn: {fileID: 1147645085}
@@ -10364,7 +10364,7 @@ GameObject:
   - component: {fileID: 1323178591}
   - component: {fileID: 1323178590}
   m_Layer: 5
-  m_Name: GameOverText
+  m_Name: KickedText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10409,7 +10409,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Host Has Disconnected!
+  m_text: Host Has Kicked You Out!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

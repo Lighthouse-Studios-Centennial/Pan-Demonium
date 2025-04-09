@@ -23,7 +23,8 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
     [SerializeField] private LayerMask kitchenObjectLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
     [SerializeField] private PlayerVisual playerVisual;
-public NetworkVariable<bool> IsWalking { get; private set; } = new NetworkVariable<bool>(false);
+    //public NetworkVariable<bool> IsWalking { get; private set; } = new NetworkVariable<bool>(false);
+    public bool IsWalking { get; private set; }
     private Vector3 lastInteractDir;
     private BaseCounter selectedCounter;
     private KitchenObject selectedKitchenObject;
@@ -183,113 +184,31 @@ public NetworkVariable<bool> IsWalking { get; private set; } = new NetworkVariab
 
     }
 
-    //private void HandleMovement()
-    //{
-    //    var moveInput = InputHandler.Instance.GetInputVector();
-    //    var moveDir = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
-
-    //    float playerRadius = .6f;
-    //    float speedMultiplier = isDashing ? Mathf.Lerp(dashInitialSpeedMultiplier, dashEndSpeedMultiplier, (Time.time - lastDashTime) / dashDuration) : 1f;
-    //    float moveDistance = moveSpeed * speedMultiplier * Time.deltaTime;
-
-    //    bool canMove = !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDir, Quaternion.identity, moveDistance, collisionLayerMask);
-
-    //    if (!canMove && !isDashing)
-    //    {
-    //        Debug.Log("MoveDir: " + moveDir);
-
-    //        // Attempt Only X Movement
-    //        if(Mathf.Abs(moveDir.z) > 0.8f && Mathf.Abs(moveDir.x) > 0.1f)
-    //        {
-    //            var moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
-    //            canMove = moveDir.x != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirX, Quaternion.identity, moveDistance, collisionLayerMask);
-
-    //            if (canMove)
-    //            {
-    //                moveDir = moveDirX;
-    //                moveDistance *= 0.9f;
-    //            }
-    //            else
-    //            {
-    //                // Attempt Only Z Movement
-    //                var moveDirZ = new Vector3(0, 0, moveDir.z).normalized;
-    //                canMove = moveDir.z != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirZ, Quaternion.identity, moveDistance, collisionLayerMask);
-
-    //                if (canMove)
-    //                {
-    //                    moveDir = moveDirZ;
-    //                    moveDistance *= 0.9f;
-    //                }
-    //            }
-    //        }
-    //        else if(Mathf.Abs(moveDir.x) > 0.8f && Mathf.Abs(moveDir.z) > 0.1f)
-    //        {
-    //            var moveDirZ = new Vector3(0, 0, moveDir.z).normalized;
-    //            canMove = moveDir.z != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirZ, Quaternion.identity, moveDistance, collisionLayerMask);
-
-    //            if (canMove)
-    //            {
-    //                moveDir = moveDirZ;
-    //                moveDistance *= 0.9f;
-    //            }
-    //            else
-    //            {
-    //                // Attempt Only X Movement
-    //                var moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
-    //                canMove = moveDir.x != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirX, Quaternion.identity, moveDistance, collisionLayerMask);
-
-    //                if (canMove)
-    //                {
-    //                    moveDir = moveDirX;
-    //                    moveDistance *= 0.9f;
-    //                }
-    //            }
-    //        }
-    //        else
-    //        {
-    //            Debug.Log("Cant move");
-    //        }
-    //    }
-
-    //    if (canMove)
-    //    {
-    //        transform.position += moveDistance * moveDir;
-    //    }
-
-    //    IsWalking = moveDir != Vector3.zero;
-
-    //    float rotationSpeed = 10f;
-    //    transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotationSpeed);
-
-    //}
     private void HandleMovement()
     {
         var moveInput = InputHandler.Instance.GetInputVector();
         var moveDir = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
-        var oriMoveDir = moveDir;
 
-        float playerRadius = .5f;
+        float playerRadius = .6f;
         float speedMultiplier = isDashing ? Mathf.Lerp(dashInitialSpeedMultiplier, dashEndSpeedMultiplier, (Time.time - lastDashTime) / dashDuration) : 1f;
         float moveDistance = moveSpeed * speedMultiplier * Time.deltaTime;
 
         bool canMove = !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDir, Quaternion.identity, moveDistance, collisionLayerMask);
 
-        if (!canMove)
+        if (!canMove && !isDashing)
         {
-            Debug.Log("Move Dir: " + moveDir);
-            var absX = Mathf.Abs(moveDir.x);
-            var absZ = Mathf.Abs(moveDir.z);
+            Debug.Log("MoveDir: " + moveDir);
 
-            if (absZ > 0.5f && absX > 0.2f || absX > 0.5f)
+            // Attempt Only X Movement
+            if (Mathf.Abs(moveDir.z) > 0.8f && Mathf.Abs(moveDir.x) > 0.1f)
             {
-                // Attempt Only X Movement
                 var moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
                 canMove = moveDir.x != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirX, Quaternion.identity, moveDistance, collisionLayerMask);
 
                 if (canMove)
                 {
-                    moveDistance *= absX;
                     moveDir = moveDirX;
+                    moveDistance *= 0.9f;
                 }
                 else
                 {
@@ -299,12 +218,38 @@ public NetworkVariable<bool> IsWalking { get; private set; } = new NetworkVariab
 
                     if (canMove)
                     {
-                        moveDistance *= absZ;
                         moveDir = moveDirZ;
+                        moveDistance *= 0.9f;
                     }
                 }
             }
-            
+            else if (Mathf.Abs(moveDir.x) > 0.8f && Mathf.Abs(moveDir.z) > 0.1f)
+            {
+                var moveDirZ = new Vector3(0, 0, moveDir.z).normalized;
+                canMove = moveDir.z != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirZ, Quaternion.identity, moveDistance, collisionLayerMask);
+
+                if (canMove)
+                {
+                    moveDir = moveDirZ;
+                    moveDistance *= 0.9f;
+                }
+                else
+                {
+                    // Attempt Only X Movement
+                    var moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
+                    canMove = moveDir.x != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirX, Quaternion.identity, moveDistance, collisionLayerMask);
+
+                    if (canMove)
+                    {
+                        moveDir = moveDirX;
+                        moveDistance *= 0.9f;
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log("Cant move");
+            }
         }
 
         if (canMove)
@@ -312,13 +257,69 @@ public NetworkVariable<bool> IsWalking { get; private set; } = new NetworkVariab
             transform.position += moveDistance * moveDir;
         }
 
-        IsWalking.Value = moveDir != Vector3.zero;
+        IsWalking = moveDir != Vector3.zero;
 
         float rotationSpeed = 10f;
-        transform.forward = Vector3.Slerp(transform.forward, oriMoveDir, Time.deltaTime * rotationSpeed);
+        transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotationSpeed);
 
-        HandleDash();
     }
+    //private void HandleMovement()
+    //{
+    //    var moveInput = InputHandler.Instance.GetInputVector();
+    //    var moveDir = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
+    //    var oriMoveDir = moveDir;
+
+    //    float playerRadius = .5f;
+    //    float speedMultiplier = isDashing ? Mathf.Lerp(dashInitialSpeedMultiplier, dashEndSpeedMultiplier, (Time.time - lastDashTime) / dashDuration) : 1f;
+    //    float moveDistance = moveSpeed * speedMultiplier * Time.deltaTime;
+
+    //    bool canMove = !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDir, Quaternion.identity, moveDistance, collisionLayerMask);
+
+    //    if (!canMove)
+    //    {
+    //        Debug.Log("Move Dir: " + moveDir);
+    //        var absX = Mathf.Abs(moveDir.x);
+    //        var absZ = Mathf.Abs(moveDir.z);
+
+    //        if (absZ > 0.5f && absX > 0.2f || absX > 0.5f)
+    //        {
+    //            // Attempt Only X Movement
+    //            var moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
+    //            canMove = moveDir.x != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirX, Quaternion.identity, moveDistance, collisionLayerMask);
+
+    //            if (canMove)
+    //            {
+    //                moveDistance *= absX;
+    //                moveDir = moveDirX;
+    //            }
+    //            else
+    //            {
+    //                // Attempt Only Z Movement
+    //                var moveDirZ = new Vector3(0, 0, moveDir.z).normalized;
+    //                canMove = moveDir.z != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirZ, Quaternion.identity, moveDistance, collisionLayerMask);
+
+    //                if (canMove)
+    //                {
+    //                    moveDistance *= absZ;
+    //                    moveDir = moveDirZ;
+    //                }
+    //            }
+    //        }
+
+    //    }
+
+    //    if (canMove)
+    //    {
+    //        transform.position += moveDistance * moveDir;
+    //    }
+
+    //    IsWalking.Value = moveDir != Vector3.zero;
+
+    //    float rotationSpeed = 10f;
+    //    transform.forward = Vector3.Slerp(transform.forward, oriMoveDir, Time.deltaTime * rotationSpeed);
+
+    //    HandleDash();
+    //}
 
     private void HandleDash()
     {

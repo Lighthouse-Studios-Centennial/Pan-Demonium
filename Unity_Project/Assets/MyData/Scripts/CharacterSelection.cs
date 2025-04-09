@@ -19,7 +19,7 @@ public class CharacterSelection : MonoBehaviour
         {
             PlayerData playerData = KitchenGameMultiplayer.Instance.GetPlayerDataFromPlayerIndex(playerIndex);
             KitchenGameLobby.Instance.KickPlayer(playerData.playerId.ToString());
-            KitchenGameMultiplayer.Instance.KickPlayer(playerData.clientId);
+            KitchenGameMultiplayer.Instance.KickPlayer(playerData.clientId, "You Have Been Kicked Out by Host");
         });
     }
 

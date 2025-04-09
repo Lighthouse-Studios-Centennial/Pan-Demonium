@@ -6,8 +6,11 @@ public class WaitingForOtherPlayerUI : MonoBehaviour
 {
     private void Start()
     {
-        GameManager.Instance.OnLocalPlayerReadyChanged += GameManager_OnLocalPlayerReadyChanged;
-        GameManager.Instance.OnStateChanged += GameManager_OnStateChanged;
+        if (KitchenGameMultiplayer.playMultiplayer)
+        {
+            GameManager.Instance.OnLocalPlayerReadyChanged += GameManager_OnLocalPlayerReadyChanged;
+            GameManager.Instance.OnStateChanged += GameManager_OnStateChanged;
+        }
 
         Hide();
     }

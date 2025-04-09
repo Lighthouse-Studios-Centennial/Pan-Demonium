@@ -49,7 +49,8 @@ public class PlayerAnimation : NetworkBehaviour
 
     private void LateUpdate()
     {
-        animator.SetBool(IsWalkingHash, playerController.IsWalking.Value);
+        //animator.SetBool(IsWalkingHash, playerController.IsWalking.Value);
+        animator.SetBool(IsWalkingHash, playerController.IsWalking);
     }
 
 }

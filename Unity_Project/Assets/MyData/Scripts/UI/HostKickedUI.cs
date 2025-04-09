@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HostDisconnectUI : MonoBehaviour
+public class HostKickedUI : MonoBehaviour
 {
     [SerializeField] private Button playAgainBtn;
 
@@ -31,12 +29,10 @@ public class HostDisconnectUI : MonoBehaviour
 
     private void NetworkManager_OnClientDisconnectCallback(ulong clientId)
     {
-        Debug.Log($"<<HostDisconnectUI>> Client disconnected: {clientId}");
-        if (clientId == NetworkManager.ServerClientId)
-        {
-            // Server is shutting down
+        Debug.Log($"<<HostKickedUI>> Client disconnected: {clientId}");
+        Debug.Log($"<<HostKickedUI>> Local Client client ID: {NetworkManager.Singleton.LocalClientId}");
+        if (NetworkManager.Singleton.LocalClientId == clientId)
             Show();
-        }
     }
 
     private void Show()

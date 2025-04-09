@@ -9,6 +9,7 @@ using UnityEngine.UI;
 
 public class LobbyUI : MonoBehaviour
 {
+    [SerializeField] private GameObject backgroundImg;
     [SerializeField] private TMP_InputField playerNameInput;
 
     [SerializeField] private Button mainMenuBtn;
@@ -25,6 +26,8 @@ public class LobbyUI : MonoBehaviour
 
     private void Start()
     {
+        backgroundImg.SetActive(!KitchenGameMultiplayer.playMultiplayer);
+
         lobbyTemplate.gameObject.SetActive(false);
 
         mainMenuBtn.onClick.AddListener(() =>
