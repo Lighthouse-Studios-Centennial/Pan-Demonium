@@ -28,7 +28,7 @@ public class CharacterSelection : MonoBehaviour
         KitchenGameMultiplayer.Instance.OnPlayerDataNetworkListChanged += KitchenGameMultiplayer_OnPlayerDataNetworkListChanged;
         PlayerReadyHandler.Instance.OnReadyChanged += PlayerReadyHandler_OnReadyChanged;
 
-        kickBtn.gameObject.SetActive(NetworkManager.Singleton.IsServer);
+        kickBtn.gameObject.SetActive(NetworkManager.Singleton.IsServer && playerIndex != 0);
 
         UpdatePlayer();
     }
