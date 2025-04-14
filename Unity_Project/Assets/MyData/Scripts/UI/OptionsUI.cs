@@ -25,8 +25,14 @@ public class OptionsUI : MonoBehaviour
     [SerializeField] private Button moveLeftBtn;
     [SerializeField] private Button moveRightBtn;
     [SerializeField] private Button interactBtn;
+    [SerializeField] private Button interactBtn_Gamepad;
     [SerializeField] private Button interactAltBtn;
+    [SerializeField] private Button interactAltBtn_Gamepad;
     [SerializeField] private Button pauseBtn;
+    [SerializeField] private Button dashBtn;
+    [SerializeField] private Button dashBtn_Gamepad;
+    [SerializeField] private Button throwBtn;
+    [SerializeField] private Button throwBtn_Gamepad;
 
     [Header("Rebinding Texts")]
     [SerializeField] private TextMeshProUGUI moveUpText;
@@ -34,8 +40,14 @@ public class OptionsUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI moveLeftText;
     [SerializeField] private TextMeshProUGUI moveRightText;
     [SerializeField] private TextMeshProUGUI interactText;
+    [SerializeField] private TextMeshProUGUI interactText_Gamepad;
     [SerializeField] private TextMeshProUGUI interactAltText;
+    [SerializeField] private TextMeshProUGUI interactAltText_Gamepad;
     [SerializeField] private TextMeshProUGUI pauseText;
+    [SerializeField] private TextMeshProUGUI dashText;
+    [SerializeField] private TextMeshProUGUI dashText_Gamepad;
+    [SerializeField] private TextMeshProUGUI throwText;
+    [SerializeField] private TextMeshProUGUI throwText_Gamepad;
 
     private void Awake()
     {
@@ -65,6 +77,15 @@ public class OptionsUI : MonoBehaviour
         interactBtn.onClick.AddListener(() => RebindBindings(InputHandler.Bindings.Interact));
         interactAltBtn.onClick.AddListener(() => RebindBindings(InputHandler.Bindings.Interact_Alt));
         pauseBtn.onClick.AddListener(() => RebindBindings(InputHandler.Bindings.Pause));
+
+        interactBtn_Gamepad.onClick.AddListener(() => RebindBindings(InputHandler.Bindings.Interact_Gamepad));
+        interactAltBtn_Gamepad.onClick.AddListener(() => RebindBindings(InputHandler.Bindings.Interact_Alt_Gamepad));
+
+        throwBtn.onClick.AddListener(() => RebindBindings(InputHandler.Bindings.Throw));
+        throwBtn_Gamepad.onClick.AddListener(() => RebindBindings(InputHandler.Bindings.Throw_Gamepad));
+
+        dashBtn.onClick.AddListener(() => RebindBindings(InputHandler.Bindings.Dash));
+        dashBtn_Gamepad.onClick.AddListener(() => RebindBindings(InputHandler.Bindings.Dash_Gamepad));
     }
 
     private void Start()
@@ -102,6 +123,15 @@ public class OptionsUI : MonoBehaviour
         interactText.text = InputHandler.Instance.GetBindingsText(InputHandler.Bindings.Interact);
         interactAltText.text = InputHandler.Instance.GetBindingsText(InputHandler.Bindings.Interact_Alt);
         pauseText.text = InputHandler.Instance.GetBindingsText(InputHandler.Bindings.Pause);
+
+        interactText_Gamepad.text = InputHandler.Instance.GetBindingsText(InputHandler.Bindings.Interact_Gamepad);
+        interactAltText_Gamepad.text = InputHandler.Instance.GetBindingsText(InputHandler.Bindings.Interact_Alt_Gamepad);
+
+        throwText.text = InputHandler.Instance.GetBindingsText(InputHandler.Bindings.Throw);
+        throwText_Gamepad.text = InputHandler.Instance.GetBindingsText(InputHandler.Bindings.Throw_Gamepad);
+
+        dashText.text = InputHandler.Instance.GetBindingsText(InputHandler.Bindings.Dash);
+        dashText_Gamepad.text = InputHandler.Instance.GetBindingsText(InputHandler.Bindings.Dash_Gamepad);
     }
 
     public void Show()

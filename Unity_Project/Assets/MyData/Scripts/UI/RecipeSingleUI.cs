@@ -103,8 +103,18 @@ public class RecipeSingleUI : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        shakeAnimation.DOKill();
+        completeAnimation.DOKill();
+        outDatedAnimation.DOKill();
+    }
+
     public void DestroyGO()
     {
+        shakeAnimation.DOKill();
+        completeAnimation.DOKill();
+        outDatedAnimation.DOKill();
         Destroy(gameObject);
     }
 }

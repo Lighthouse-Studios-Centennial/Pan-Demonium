@@ -27,6 +27,7 @@ public class InputHandler : MonoBehaviour
         Interact_Gamepad,
         Interact_Alt_Gamepad,
         Dash_Gamepad,
+        Throw_Gamepad,
         Pause_Gamepad,
     }
 
@@ -107,7 +108,7 @@ public class InputHandler : MonoBehaviour
     public void RebindBindings(Bindings bindings, Action onRebindCompleted)
     {
         InputAction inputAction;
-        int bindingIndex;
+        int bindingIndex; // array index defined in input action asset under specific action
 
         switch (bindings)
         {
@@ -164,13 +165,25 @@ public class InputHandler : MonoBehaviour
                 inputAction = inputActions.Player.Pause;
                 bindingIndex = 1;
                 break;
+            case Bindings.Dash_Gamepad:
+                inputAction = inputActions.Player.Dash;
+                bindingIndex = 1;
+                break;
+            case Bindings.Throw_Gamepad:
+                inputAction = inputActions.Player.Throw;
+                bindingIndex = 1;
+                break;
         }
 
         inputActions.Player.Disable();
 
-        inputAction.PerformInteractiveRebinding(bindingIndex).OnComplete(callback =>
+        inputAction.PerformInteractiveRebinding(bindingIndex)
+            .WithControlsExcluding("<Gamepad>/rightTriggerButton")
+            .WithControlsExcluding("<Gamepad>/leftTriggerButton")
+            .OnComplete(callback =>
         {
             inputActions.Player.Enable();
+            Debug.Log(callback.action.bindings[bindingIndex].ToString());
             callback.Dispose();
 
             var bindingsJson = inputActions.SaveBindingOverridesAsJson();
@@ -189,6 +202,8 @@ public class InputHandler : MonoBehaviour
         PlayerPrefs.DeleteKey(PLAYER_PREF_BINDING_JSON);
 
         inputActions.Player.Enable();
+
+        Debug.Log(inputActions.Player.Dash.ToString());
     }
 
     public string GetBindingsText(Bindings bindings)
@@ -196,31 +211,35 @@ public class InputHandler : MonoBehaviour
         switch (bindings)
         {
             case Bindings.Move_Up:
-                return inputActions.Player.Move.bindings[1].ToDisplayString();
+                return inputActions.Player.Move.GetBindingDisplayString(bindingIndex: 1);
             case Bindings.Move_Down:
-                return inputActions.Player.Move.bindings[3].ToDisplayString();
+                return inputActions.Player.Move.GetBindingDisplayString(bindingIndex: 3);
             case Bindings.Move_Left:
-                return inputActions.Player.Move.bindings[5].ToDisplayString();
+                return inputActions.Player.Move.GetBindingDisplayString(bindingIndex: 5);
             case Bindings.Move_Right:
-                return inputActions.Player.Move.bindings[7].ToDisplayString();
+                return inputActions.Player.Move.GetBindingDisplayString(bindingIndex: 7);
             case Bindings.Interact:
-                return inputActions.Player.Interact.bindings[0].ToDisplayString();
+                return inputActions.Player.Interact.GetBindingDisplayString(bindingIndex: 0);
             case Bindings.Interact_Alt:
-                return inputActions.Player.InteractAlt.bindings[0].ToDisplayString();
+                return inputActions.Player.InteractAlt.GetBindingDisplayString(bindingIndex: 0);
             case Bindings.Dash:
-                return inputActions.Player.Dash.bindings[0].ToDisplayString();
+                return inputActions.Player.Dash.GetBindingDisplayString(bindingIndex: 0);
             case Bindings.Throw:
-                return inputActions.Player.Throw.bindings[0].ToDisplayString();
+                return inputActions.Player.Throw.GetBindingDisplayString(bindingIndex: 0);
             case Bindings.Pause:
-                return inputActions.Player.Pause.bindings[0].ToDisplayString();
+                return inputActions.Player.Pause.GetBindingDisplayString(bindingIndex: 0);
             case Bindings.Move_Gamepad:
-                return inputActions.Player.Move.bindings[9].ToDisplayString();
+                return inputActions.Player.Move.GetBindingDisplayString(bindingIndex: 9);
             case Bindings.Interact_Gamepad:
-                return inputActions.Player.Interact.bindings[1].ToDisplayString();
+                return inputActions.Player.Interact.GetBindingDisplayString(bindingIndex: 1);
             case Bindings.Interact_Alt_Gamepad:
-                return inputActions.Player.InteractAlt.bindings[1].ToDisplayString();
+                return inputActions.Player.InteractAlt.GetBindingDisplayString(bindingIndex: 1);
             case Bindings.Pause_Gamepad:
-                return inputActions.Player.Pause.bindings[1].ToDisplayString();
+                return inputActions.Player.Pause.GetBindingDisplayString(bindingIndex: 1);
+            case Bindings.Dash_Gamepad:
+                return inputActions.Player.Dash.GetBindingDisplayString(bindingIndex: 1);
+            case Bindings.Throw_Gamepad:
+                return inputActions.Player.Throw.GetBindingDisplayString(bindingIndex: 1);
             default:
                 return string.Empty;
         }

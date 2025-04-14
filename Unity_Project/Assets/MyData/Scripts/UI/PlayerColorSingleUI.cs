@@ -6,6 +6,8 @@ public class PlayerColorSingleUI : MonoBehaviour
     [SerializeField] private int colorId;
     [SerializeField] private Image colorImage;
     [SerializeField] private GameObject selectedGO;
+    [SerializeField] private Color selectedColor = Color.red * (Color.green * .5f);
+    [SerializeField] private Color unselectedColor = Color.white;
 
     private void Start()
     {
@@ -37,11 +39,11 @@ public class PlayerColorSingleUI : MonoBehaviour
     {
         if (KitchenGameMultiplayer.Instance.GetLocalPlayerData().colorId == colorId)
         {
-            selectedGO.SetActive(true);
+            selectedGO.GetComponent<Image>().color = selectedColor;
         }
         else
         {
-            selectedGO.SetActive(false);
+            selectedGO.GetComponent<Image>().color = unselectedColor;
         }
     }
 }

@@ -4,6 +4,8 @@ using UnityEngine.UI;
 public class LevelInfoSingleUI : MonoBehaviour
 {
     [SerializeField] private GameObject selectedGO;
+    [SerializeField] private Color selectedColor = Color.red * (Color.green * .5f);
+    [SerializeField] private Color unselectedColor = Color.white;
 
     [SerializeField] private int levelIndex = -1;
 
@@ -25,7 +27,7 @@ public class LevelInfoSingleUI : MonoBehaviour
 
     private void KitchenGameMultiplayer_OnGameLevelIndexChanged(int selectedLevelIndex)
     {
-        selectedGO.SetActive(selectedLevelIndex == levelIndex);
+        selectedGO.GetComponent<Image>().color = selectedLevelIndex == levelIndex ? selectedColor : unselectedColor;
         Debug.Log("Selected level index from Single ui: " + selectedLevelIndex);
     }
 }

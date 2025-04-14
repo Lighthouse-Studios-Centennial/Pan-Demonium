@@ -38,7 +38,7 @@ public class GameManager : NetworkBehaviour
     private NetworkVariable<float> passionMeter = new(0f);
     private ReactiveProperty<int> earningReactive = new(0);
     private ReactiveProperty<int> passionMeterReactive = new(0);
-    private float maxGameplayTimer = 5 * 60f; // Default
+    private float maxGameplayTimer = 1 * 60f; // Default
     //private float maxGameplayTimer = 15 * 60f; // Testing
     private bool isLocalGamePaused = false;
     private NetworkVariable<bool> isGamePaused = new(false);

@@ -6,7 +6,10 @@ public class PauseMultiplayerUI : MonoBehaviour
 {
     private void Start()
     {
-        GameManager.Instance.OnMultiplayerPauseStateChanged += GameManager_OnMultiplayerPauseStateChanged;
+        if (KitchenGameMultiplayer.playMultiplayer)
+        {
+            GameManager.Instance.OnMultiplayerPauseStateChanged += GameManager_OnMultiplayerPauseStateChanged;
+        }
 
         Hide();
     }

@@ -37,7 +37,8 @@ public class KitchenObject : NetworkBehaviour
                     throwTween.Pause();
 
                     hit.TryGetComponent(out IKitchenObjectParent kitchenObjectParent);
-                    if (kitchenObjectParent != null && kitchenObjectParent is not ContainerCounter && !kitchenObjectParent.HasKitchenObject())
+                    if (kitchenObjectParent != null && !kitchenObjectParent.HasKitchenObject()
+                        && (kitchenObjectParent is ClearCounter || kitchenObjectParent is PlayerController)) // only clear counter or player can hold the thrown object
                     {
                         this.SetKitchenObjectParent(kitchenObjectParent);
                     }
