@@ -188,27 +188,30 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
     {
         var moveInput = InputHandler.Instance.GetInputVector();
         var moveDir = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
+        var oriMoveDir = moveDir;
 
-        float playerRadius = .6f;
+        float playerRadius = .5f;
         float speedMultiplier = isDashing ? Mathf.Lerp(dashInitialSpeedMultiplier, dashEndSpeedMultiplier, (Time.time - lastDashTime) / dashDuration) : 1f;
         float moveDistance = moveSpeed * speedMultiplier * Time.deltaTime;
 
         bool canMove = !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDir, Quaternion.identity, moveDistance, collisionLayerMask);
 
-        if (!canMove && !isDashing)
+        if (!canMove)
         {
-            Debug.Log("MoveDir: " + moveDir);
+            Debug.Log("Move Dir: " + moveDir);
+            var absX = Mathf.Abs(moveDir.x);
+            var absZ = Mathf.Abs(moveDir.z);
 
-            // Attempt Only X Movement
-            if (Mathf.Abs(moveDir.z) > 0.8f && Mathf.Abs(moveDir.x) > 0.1f)
+            if (absZ > 0.5f && absX > 0.2f || absX > 0.5f)
             {
+                // Attempt Only X Movement
                 var moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
                 canMove = moveDir.x != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirX, Quaternion.identity, moveDistance, collisionLayerMask);
 
                 if (canMove)
                 {
+                    moveDistance *= absX;
                     moveDir = moveDirX;
-                    moveDistance *= 0.9f;
                 }
                 else
                 {
@@ -218,38 +221,12 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
 
                     if (canMove)
                     {
+                        moveDistance *= absZ;
                         moveDir = moveDirZ;
-                        moveDistance *= 0.9f;
                     }
                 }
             }
-            else if (Mathf.Abs(moveDir.x) > 0.8f && Mathf.Abs(moveDir.z) > 0.1f)
-            {
-                var moveDirZ = new Vector3(0, 0, moveDir.z).normalized;
-                canMove = moveDir.z != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirZ, Quaternion.identity, moveDistance, collisionLayerMask);
-
-                if (canMove)
-                {
-                    moveDir = moveDirZ;
-                    moveDistance *= 0.9f;
-                }
-                else
-                {
-                    // Attempt Only X Movement
-                    var moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
-                    canMove = moveDir.x != 0 && !Physics.BoxCast(transform.position, Vector3.one * playerRadius, moveDirX, Quaternion.identity, moveDistance, collisionLayerMask);
-
-                    if (canMove)
-                    {
-                        moveDir = moveDirX;
-                        moveDistance *= 0.9f;
-                    }
-                }
-            }
-            else
-            {
-                Debug.Log("Cant move");
-            }
+            
         }
 
         if (canMove)
@@ -260,8 +237,9 @@ public class PlayerController : NetworkBehaviour, IKitchenObjectParent
         IsWalking = moveDir != Vector3.zero;
 
         float rotationSpeed = 10f;
-        transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotationSpeed);
+        transform.forward = Vector3.Slerp(transform.forward, oriMoveDir, Time.deltaTime * rotationSpeed);
 
+        HandleDash();
     }
     //private void HandleMovement()
     //{
